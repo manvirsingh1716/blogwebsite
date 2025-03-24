@@ -34,17 +34,17 @@ export function PageList() {
 
   const handleDelete = async (pageId: string) => {
     try {
-      const response = await fetch(`/api/pages/${pageId}`, {
+      await fetch(`/api/pages/by-id/${pageId}`, {
         method: 'DELETE',
       });
   
-      // Log response details
-      const data = await response.json();
-      console.log('Delete Response:', response.status, data);
+      // // Log response details
+      // const data = await response.json();
+      // console.log('Delete Response:', response.status, data);
   
-      if (!response.ok) {
-        throw new Error(`Failed to delete page: ${data.message || response.statusText}`);
-      }
+      // if (!response.ok) {
+      //   throw new Error(`Failed to delete page: ${data.message || response.statusText}`);
+      // }
   
       // Refresh the page list
       fetchPages();
