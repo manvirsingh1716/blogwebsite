@@ -8,6 +8,7 @@ import { AboutTemplate } from '@/components/templates/AboutTemplate';
 import { BlogTemplate } from '@/components/templates/BlogTemplate';
 import { GeneralStudiesTemplate } from '@/components/templates/GeneralStudiesTemplate';
 import { CurrentAffairsTemplate } from '@/components/templates/CurrentAffairsTemplate';
+import { env } from '@/config/env';
 
 // Map template IDs to components
 const TEMPLATE_MAP: Record<string, React.FC<BaseTemplateProps>> = {
@@ -22,21 +23,26 @@ const TEMPLATE_MAP: Record<string, React.FC<BaseTemplateProps>> = {
 
 async function getPage(slug: string, section: string[]): Promise<BaseTemplateProps['page'] | null> {
   try {
-    const fullPath = `${slug}/${section.join('/')}`;
+    const fullPath = `${slug}-${section.join('-')}`;
     console.log('Fetching page for path:', fullPath);
+
+    const response = await fetch(`${env.API}/page/slug/${fullPath}`);
+    const res = await response.json();
+    const page = res.data;
+    console.log(page);
     
-    const page = await prisma.page.findUnique({
-      where: { slug: fullPath },
-      include: {
-        template: true,
-        parent: true,
-        children: {
-          include: {
-            template: true
-          }
-        }
-      }
-    });
+    // const page = await prisma.page.findUnique({
+    //   where: { slug: fullPath },
+    //   include: {
+    //     template: true,
+    //     parent: true,
+    //     children: {
+    //       include: {
+    //         template: true
+    //       }
+    //     }
+    //   }
+    // });
 
     if (!page) {
       console.log('Page not found for path:', fullPath);

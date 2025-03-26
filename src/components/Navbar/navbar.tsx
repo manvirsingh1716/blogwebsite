@@ -184,6 +184,17 @@ export default function Navbar({ navigation }: NavbarProps) {
               <div className="hidden lg:flex flex-1 justify-center items-center gap-1 ml-4 xl:ml-8">
                 <div className="flex items-center space-x-1 xl:space-x-2"></div>
                 <NestedNavigation items={navigation} />
+                <Link href="/current-affairs" passHref>
+                  <span
+                    className={`text-[14px] whitespace-nowrap font-bold tracking-wide py-6 px-2 xl:px-3 transition-colors duration-300 ${
+                      isScrolled
+                        ? "text-black hover:text-gray-800"
+                        : "text-gray-800 hover:text-blue-700"
+                    }`}
+                  >
+                    Current Affairs
+                  </span>
+                </Link>
                 <Link href="/about" passHref>
                   <span
                     className={`text-[14px] whitespace-nowrap font-bold tracking-wide py-6 px-2 xl:px-3 transition-colors duration-300 ${

@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
+import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import CurrentAffairsLayout from "@/components/CurrentAffairs/CurrentAffairsLayout";
@@ -81,46 +80,30 @@ const generateSampleArticles = (
   return baseArticles;
 };
 
-const CurrentAffairsSectionPage = () => {
-  const router = useRouter();
-  const { category, section } = router.query;
+interface CurrentAffairsSectionPageProps {
+  params: { category: string; section: string };
+}
+
+const CurrentAffairsSectionPage = ({
+  params,
+}: CurrentAffairsSectionPageProps) => {
+  const { category, section } = params;
   const path = `/current-affairs/${category}/${section}`;
 
-  // State for filters
-  const [selectedTopic, setSelectedTopic] = useState("all");
-  const [sortOrder, setSortOrder] = useState("latest");
-  const [searchQuery, setSearchQuery] = useState("");
-
   // Get configuration for the current section
-  const config = sectionConfig[section as string] || {
+  const config = sectionConfig[section] || {
     title: "Current Affairs",
     description: "Stay updated with comprehensive coverage of current affairs.",
     topics: ["General"],
   };
 
   // Generate sample articles
-  const articles = generateSampleArticles(
-    category as string,
-    section as string
-  );
+  const articles = generateSampleArticles(category, section);
 
   // Filter and sort articles
-  const filteredArticles = articles
-    .filter((article) => {
-      const matchesTopic =
-        selectedTopic === "all" || article.topics.includes(selectedTopic);
-      const matchesSearch =
-        !searchQuery ||
-        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesTopic && matchesSearch;
-    })
-    .sort((a, b) => {
-      if (sortOrder === "latest") {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      }
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
+  const filteredArticles = articles.sort((a, b) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
 
   return (
     <CurrentAffairsLayout activeSection={path}>
@@ -135,39 +118,6 @@ const CurrentAffairsSectionPage = () => {
           {config.title}
         </h1>
         <p className="text-gray-600">{config.description}</p>
-      </div>
-
-      {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-        <div className="flex flex-wrap gap-4">
-          <select
-            className="px-3 py-2 border rounded-md text-sm text-gray-700"
-            value={selectedTopic}
-            onChange={(e) => setSelectedTopic(e.target.value)}
-          >
-            <option value="all">All Topics</option>
-            {config.topics.map((topic) => (
-              <option key={topic} value={topic}>
-                {topic}
-              </option>
-            ))}
-          </select>
-          <select
-            className="px-3 py-2 border rounded-md text-sm text-gray-700"
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-          >
-            <option value="latest">Latest First</option>
-            <option value="oldest">Oldest First</option>
-          </select>
-          <input
-            type="text"
-            placeholder="Search articles..."
-            className="px-3 py-2 border rounded-md text-sm flex-grow"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
       </div>
 
       {/* Articles List */}
