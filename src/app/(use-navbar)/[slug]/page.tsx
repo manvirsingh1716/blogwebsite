@@ -8,6 +8,7 @@ import { AboutTemplate } from '@/components/templates/AboutTemplate';
 import { BlogTemplate } from '@/components/templates/BlogTemplate';
 import { GeneralStudiesTemplate } from '@/components/templates/GeneralStudiesTemplate';
 import { CurrentAffairsTemplate } from '@/components/templates/CurrentAffairsTemplate';
+import { env } from '@/config/env';
 
 // Map template IDs to components
 const TEMPLATE_MAP: Record<string, FC<BaseTemplateProps>> = {
@@ -23,19 +24,23 @@ const TEMPLATE_MAP: Record<string, FC<BaseTemplateProps>> = {
 async function getPage(slug: string): Promise<BaseTemplateProps['page'] | null> {
   try {
     console.log('Fetching page for slug:', slug);
+
+    const response = await fetch(`${env.API}/page/slug/${slug}`);
+    const res = await response.json();
+    const page = res.data;
     
-    const page = await prisma.page.findUnique({
-      where: { slug },
-      include: {
-        template: true,
-        parent: true,
-        children: {
-          include: {
-            template: true
-          }
-        }
-      }
-    });
+    // const page = await prisma.page.findUnique({
+    //   where: { slug },
+    //   include: {
+    //     template: true,
+    //     parent: true,
+    //     children: {
+    //       include: {
+    //         template: true
+    //       }
+    //     }
+    //   }
+    // });
 
     if (!page) {
       console.log('Page not found for slug:', slug);
