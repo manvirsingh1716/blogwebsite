@@ -1,3 +1,4 @@
+import { env } from '@/config/env';
 import prisma from './db'
 
 interface NavItem {
@@ -7,81 +8,101 @@ interface NavItem {
 }
 
 export async function getNavigationTree(): Promise<NavItem[]> {
-  const pages = await prisma.page.findMany({
-    select: {
-      slug: true,
-      title: true,
-    },
-    orderBy: {
-      slug: 'asc',
-    },
-  })
+  const response = await fetch(`${env.API}/page/order`);
+  const res = await response.json();
+  const pages = res.data;
+  // const pages = await prisma.page.findMany({
+  //   select: {
+  //     slug: true,
+  //     title: true,
+  //   },
+  //   orderBy: {
+  //     slug: 'asc',
+  //   },
+  // })
 
   const tree: NavItem[] = []
 
   // Build the navigation tree
-  pages.forEach((page) => {
-    const parts = page.slug.split('/')
-    let currentLevel = tree
+  interface Page {
+    slug: string;
+    title: string;
+  }
 
-    parts.forEach((part, index) => {
-      const currentPath = parts.slice(0, index + 1).join('/')
-      const existing = currentLevel.find(item => item.slug === currentPath)
+  interface PageResponse {
+    data: Page[];
+  }
+
+  pages?.forEach((page: Page) => {
+    const parts: string[] = page.slug.split('/');
+    let currentLevel: NavItem[] = tree;
+
+    parts?.forEach((part: string, index: number) => {
+      const currentPath: string = parts.slice(0, index + 1).join('/');
+      const existing: NavItem | undefined = currentLevel.find(item => item.slug === currentPath);
 
       if (existing) {
-        currentLevel = existing.children
+        currentLevel = existing.children;
       } else {
         const newItem: NavItem = {
           slug: currentPath,
           title: index === parts.length - 1 ? page.title : part,
           children: [],
-        }
-        currentLevel.push(newItem)
-        currentLevel = newItem.children
+        };
+        currentLevel.push(newItem);
+        currentLevel = newItem.children;
       }
-    })
-  })
+    });
+  });
 
   return tree
 }
 
 export async function getFooterLinks(): Promise<NavItem[]> {
-  const pages = await prisma.page.findMany({
-    select: {
-      slug: true,
-      title: true,
-    },
-    orderBy: {
-      slug: 'asc',
-    },
-  })
+  const response = await fetch(`${env.API}/page/order`);
+  const res = await response.json();
+  const pages = res.data;
+  // const pages = await prisma.page.findMany({
+  //   select: {
+  //     slug: true,
+  //     title: true,
+  //   },
+  //   orderBy: {
+  //     slug: 'asc',
+  //   },
+  // })
 
   const tree: NavItem[] = []
 
   // Build the footer links tree (up to 2 levels)
-  pages.forEach((page) => {
-    const parts = page.slug.split('/')
-    if (parts.length > 2) return // Skip deeper levels
+  interface Page {
+    slug: string;
+    title: string;
+  }
 
-    let currentLevel = tree
+  pages?.forEach((page: Page) => {
+    const parts: string[] = page.slug.split('/');
+    if (parts.length > 2) return; // Skip deeper levels
 
-    parts.forEach((part, index) => {
-      const currentPath = parts.slice(0, index + 1).join('/')
-      const existing = currentLevel.find(item => item.slug === currentPath)
+    let currentLevel: NavItem[] = tree;
+
+    parts?.forEach((part: string, index: number) => {
+      const currentPath: string = parts.slice(0, index + 1).join('/');
+      const existing: NavItem | undefined = currentLevel.find(item => item.slug === currentPath);
 
       if (existing) {
-        currentLevel = existing.children
+        currentLevel = existing.children;
       } else {
         const newItem: NavItem = {
           slug: currentPath,
           title: index === parts.length - 1 ? page.title : part,
           children: [],
-        }
-        currentLevel.push(newItem)
-        currentLevel = newItem.children
+        };
+        currentLevel.push(newItem);
+        currentLevel = newItem.children;
       }
-    })
-  })
+    });
+  });
 
   return tree;
 }

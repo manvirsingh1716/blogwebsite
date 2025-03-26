@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { PencilIcon, TrashIcon, EyeIcon } from '@heroicons/react/24/outline';
+import Cookie from 'js-cookie';
+import { env } from '@/config/env';
 
 interface Page {
-  id: string;
+  id: number;
   slug: string;
   title: string;
   templateId: string;
@@ -15,16 +17,18 @@ interface Page {
 export function PageList() {
   const [pages, setPages] = useState<Page[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const token = Cookie.get('token');
   useEffect(() => {
     fetchPages();
   }, []);
 
   const fetchPages = async () => {
     try {
-      const response = await fetch('/api/pages');
-      if (!response.ok) throw new Error('Failed to fetch pages');
-      const data = await response.json();
+      const response = await fetch(`${env.API}/page`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!response.ok) throw new Error('Failed to fetch pages');
+            const { data } = await response.json();
       setPages(data);
     } catch (error) {
       console.error('Error fetching pages:', error);
@@ -33,14 +37,15 @@ export function PageList() {
     }
   };
 
-  const handleDelete = async (pageId: string) => {
+  const handleDelete = async (pageId: number) => {
     if (!confirm('Are you sure you want to delete this page? This action cannot be undone.')) {
       return;
     }
 
     try {
-      await fetch(`/api/pages/by-id/${pageId}`, {
+      await fetch(`${env.API}/page/${pageId}`, {
         method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
       });
       fetchPages();
     } catch (error) {

@@ -11,6 +11,8 @@ import { BlogForm } from './forms/BlogForm';
 import { AboutPageForm } from './forms/AboutPageForm';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { env } from '@/config/env';
+import Cookie from 'js-cookie';
 
 interface TemplateType {
   id: string;
@@ -95,6 +97,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(1); // 1: Path Selection, 2: Template Selection, 3: Form
+  const token = Cookie.get('token');
 
   useEffect(() => {
     fetchPages();
@@ -103,9 +106,11 @@ export function PageForm({ editPage = null }: PageFormProps) {
 
   const fetchPages = async () => {
     try {
-      const response = await fetch('/api/pages');
+      const response = await fetch(`${env.API}/page`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (!response.ok) throw new Error('Failed to fetch pages');
-      const data = await response.json();
+      const { data } = await response.json();
       setPages(data);
     } catch (error) {
       console.error('Error fetching pages:', error);
@@ -115,8 +120,11 @@ export function PageForm({ editPage = null }: PageFormProps) {
 
   const fetchTemplates = async () => {
     try {
-      const response = await fetch('/api/templates');
-      const data = await response.json();
+      const response =  await fetch(`${env.API}/template`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to fetch templates');
+      const { data } = await response.json();
       
       if (!data || data.length === 0) {
         // Default templates if none exist in DB
@@ -221,106 +229,155 @@ export function PageForm({ editPage = null }: PageFormProps) {
   const handleSubmit = async (formData: PageFormData) => {
     try {
       const parentId = getSelectedParentId();
-      const currentTemplate = templates.find(t => t.id === selectedTemplate);
-      
+      const currentTemplate = templates.find((t) => t.id === selectedTemplate);
+
       if (!currentTemplate) {
-        throw new Error('No template selected');
+        throw new Error("No template selected");
       }
 
-      console.log('Parent ID:', parentId);
+      console.log("Parent ID:", parentId);
+
+      // Generate the full path for the slug
+      const fullPath = selectedLevels
+        .filter((level) => level)
+        .map((level) => pages.find((page) => page.id === level)?.slug)
+        .concat(
+          (formData.title || formData.hero?.title || "")
+            .toString()
+            .toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[^a-z0-9-]/g, "")
+        )
+        .join("/");
 
       // Create the page data based on template type
       const pageData = {
         title: formData.title || formData.hero?.title,
-        slug: (formData.title || formData.hero?.title || '').toString().toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        slug: fullPath,
         templateId: currentTemplate.id,
         parentId: parentId || null,
-        content: currentTemplate.id === 'about' ? {
-          hero: {
-            title: formData.hero?.title || '',
-            subtitle: formData.hero?.subtitle || ''
-          },
-          mission: formData.mission || '',
-          veterans: Array.isArray(formData.veterans) ? formData.veterans.map((v: TeamMember) => ({
-            name: v.name,
-            role: v.role,
-            bio: v.bio
-          })) : [],
-          coreMembers: Array.isArray(formData.coreMembers) ? formData.coreMembers.map((m: TeamMember) => ({
-            name: m.name,
-            role: m.role,
-            bio: m.bio
-          })) : []
-        } : currentTemplate.id === 'general-studies' ? {
-          title: formData.title,
-          paper: formData.paper,
-          topic: formData.topic,
-          subtopic: formData.subtopic,
-          content: formData.content,
-          importanceLevel: formData.importanceLevel || 'medium',
-          previousYearQuestions: formData.previousYearQuestions || '',
-          keyPoints: formData.keyPoints,
-          sources: formData.sources || ''
-        } : currentTemplate.id === 'study-material' ? {
-          title: formData.title || '',
-          subject: formData.subject || '',
-          content: formData.content || ''
-        } : formData,
+        content:
+          currentTemplate.id === "about"
+            ? {
+                hero: {
+                  title: formData.hero?.title || "",
+                  subtitle: formData.hero?.subtitle || "",
+                },
+                mission: formData.mission || "",
+                veterans: Array.isArray(formData.veterans)
+                  ? formData.veterans.map((v: TeamMember) => ({
+                      name: v.name,
+                      role: v.role,
+                      bio: v.bio,
+                    }))
+                  : [],
+                coreMembers: Array.isArray(formData.coreMembers)
+                  ? formData.coreMembers.map((m: TeamMember) => ({
+                      name: m.name,
+                      role: m.role,
+                      bio: m.bio,
+                    }))
+                  : [],
+              }
+            : currentTemplate.id === "general-studies"
+            ? {
+                title: formData.title,
+                paper: formData.paper,
+                topic: formData.topic,
+                subtopic: formData.subtopic,
+                content: formData.content,
+                importanceLevel: formData.importanceLevel || "medium",
+                previousYearQuestions: formData.previousYearQuestions || "",
+                keyPoints: formData.keyPoints,
+                sources: formData.sources || "",
+              }
+            : currentTemplate.id === "study-material"
+            ? {
+                title: formData.title || "",
+                subject: formData.subject || "",
+                content: formData.content || "",
+              }
+            : formData,
         metadata: {
           lastUpdated: new Date().toISOString(),
-          teamSize: formData.metadata?.teamSize || 
-            (currentTemplate.id === 'about' ? 
-              (formData.veterans?.length || 0) + (formData.coreMembers?.length || 0) : 
-              0),
+          teamSize:
+            formData.metadata?.teamSize ||
+            (currentTemplate.id === "about"
+              ? (formData.veterans?.length || 0) +
+                (formData.coreMembers?.length || 0)
+              : 0),
         },
+        level: getCurrentLevel(),
+        showInNav: true,
+        order: 0,
       };
 
       if (!pageData.title) {
-        throw new Error('Title is required');
+        throw new Error("Title is required");
       }
 
-      if (currentTemplate.id === 'general-studies') {
-        if (!pageData.content.paper) throw new Error('Paper is required');
-        if (!pageData.content.topic) throw new Error('Topic is required');
-        if (!pageData.content.subtopic) throw new Error('Subtopic is required');
+      if (currentTemplate.id === "general-studies") {
+        if (!pageData.content.paper) throw new Error("Paper is required");
+        if (!pageData.content.topic) throw new Error("Topic is required");
+        if (!pageData.content.subtopic) throw new Error("Subtopic is required");
         if (!pageData.content.content || pageData.content.content.length < 10) {
-          throw new Error('Content must be at least 10 characters');
+          throw new Error("Content must be at least 10 characters");
         }
-        if (!pageData.content.keyPoints || pageData.content.keyPoints.length < 10) {
-          throw new Error('Key points must be at least 10 characters');
+        if (
+          !pageData.content.keyPoints ||
+          pageData.content.keyPoints.length < 10
+        ) {
+          throw new Error("Key points must be at least 10 characters");
         }
-      } else if (currentTemplate.id === 'study-material') {
-        if (!pageData.content.subject) throw new Error('Subject is required');
+      } else if (currentTemplate.id === "study-material") {
+        if (!pageData.content.subject) throw new Error("Subject is required");
         if (!pageData.content.content || pageData.content.content.length < 10) {
-          throw new Error('Content must be at least 10 characters');
+          throw new Error("Content must be at least 10 characters");
         }
       }
 
-      console.log('Sending page data:', pageData);
+      console.log("Sending page data:", pageData);
 
-      const response = await fetch('/api/pages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(pageData),
+      // const response = await fetch('/api/pages', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(pageData),
+      // });
+
+      const pageData2 = {
+        ...pageData,
+        content: JSON.stringify(pageData.content),
+        metadata: JSON.stringify(pageData.metadata),
+      };
+      const response2 = await fetch(`${env.API}/page`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(pageData2),
       });
+      if (response2.ok) {
+        console.log("Working!");
+      } else console.log("Not working!");
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create page');
-      }
+      // if (!response.ok) {
+      //   const errorData = await response.json();
+      //   throw new Error(errorData.error || 'Failed to create page');
+      // }
 
-      const result = await response.json();
-      console.log('Created page:', result);
+      // const result = await response.json();
+      // console.log('Created page:', result);
 
       // Reset form and refresh
-      setSelectedTemplate('');
-      setSelectedLevels(Array(7).fill(''));
+      setSelectedTemplate("");
+      setSelectedLevels(Array(7).fill(""));
       setStep(1);
       await fetchPages();
 
       // Show success message
       setError(null);
-      alert('Page created successfully!');
+      alert("Page created successfully!");
     } catch (error) {
       console.error('Error creating page:', error);
       setError(error instanceof Error ? error.message : 'Failed to create page');
