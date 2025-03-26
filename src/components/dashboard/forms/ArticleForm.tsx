@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -8,16 +8,13 @@ import TiptapEditor from '@/components/ui/tiptapeditor';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import Image from 'next/image';
 
 const articleSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   content: z.object({
     mainContent: z.string().min(1, 'Main content is required'),
-  }),
-  metadata: z.object({
-    author: z.string().min(1, 'Author is required'),
-    keywords: z.array(z.string()),
-    description: z.string().min(1, 'Description is required'),
+    image: z.string().optional(),
   }),
 });
 
@@ -32,6 +29,10 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
   initialData,
   onSubmit,
 }) => {
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    initialData?.content?.image || null
+  );
+
   const {
     register,
     handleSubmit,
@@ -44,17 +45,26 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
       title: '',
       content: {
         mainContent: '',
-      },
-      metadata: {
-        author: '',
-        keywords: [],
-        description: '',
+        image: '',
       },
     },
   });
 
   const handleEditorChange = (content: string) => {
     setValue('content.mainContent', content, { shouldValidate: true });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setImagePreview(result);
+        setValue('content.image', result, { shouldValidate: true });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -73,6 +83,29 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
         )}
       </div>
 
+      {/* Image Upload */}
+      <div>
+        <Label htmlFor="image">Featured Image</Label>
+        <Input
+          type="file"
+          id="image"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="mt-1"
+        />
+        
+        {imagePreview && (
+          <div className="mt-4 relative w-full h-48 rounded-lg overflow-hidden border border-gray-200">
+            <Image
+              src={imagePreview}
+              alt="Image preview"
+              fill
+              className="object-cover"
+            />
+          </div>
+        )}
+      </div>
+
       {/* Main Content */}
       <div>
         <Label>Main Content</Label>
@@ -85,48 +118,6 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
         {errors.content?.mainContent && (
           <p className="mt-1 text-sm text-red-600">{errors.content.mainContent.message}</p>
         )}
-      </div>
-
-      {/* Author */}
-      <div>
-        <Label htmlFor="author">Author</Label>
-        <Input
-          type="text"
-          id="author"
-          {...register('metadata.author')}
-          className="mt-1"
-        />
-        {errors.metadata?.author && (
-          <p className="mt-1 text-sm text-red-600">{errors.metadata.author.message}</p>
-        )}
-      </div>
-
-      {/* Description */}
-      <div>
-        <Label htmlFor="description">Description</Label>
-        <Input
-          type="text"
-          id="description"
-          {...register('metadata.description')}
-          className="mt-1"
-        />
-        {errors.metadata?.description && (
-          <p className="mt-1 text-sm text-red-600">{errors.metadata.description.message}</p>
-        )}
-      </div>
-
-      {/* Keywords */}
-      <div>
-        <Label htmlFor="keywords">Keywords (comma-separated)</Label>
-        <Input
-          type="text"
-          id="keywords"
-          onChange={(e) => {
-            const keywords = e.target.value.split(',').map(k => k.trim()).filter(Boolean);
-            setValue('metadata.keywords', keywords);
-          }}
-          className="mt-1"
-        />
       </div>
 
       <Button type="submit" className="w-full">

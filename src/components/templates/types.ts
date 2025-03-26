@@ -22,3 +22,53 @@ export interface TemplateData extends BaseTemplateProps {
   level: number;
   showInNav: boolean;
 }
+
+// export interface BaseTemplateProps {
+//   page: {
+//     title: string;
+//     content: string;
+//     metadata: Record<string, any>;
+//     template: {
+//       id: string;
+//     };
+//   };
+// }
+
+// export interface UpscNotesTemplateProps extends BaseTemplateProps {
+//   page: {
+//     title: string;
+//     content: string;
+//     metadata: {
+//       tags?: string[];
+//       date?: string;
+//       readTime?: string;
+//       coverImage?: string;
+//     };
+//     template: {
+//       id: 'upsc-notes';
+//     };
+//   };
+// }
+
+// export interface GeneralTemplateProps extends BaseTemplateProps {
+//   page: {
+//     title: string;
+//     content: string;
+//     metadata: {
+//       tags?: string[];
+//       date?: string;
+//       readTime?: string;
+//       coverImage?: string;
+//     };
+//     template: {
+//       id: 'article' | 'general-studies' | 'study-material';
+//     };
+//     children: Array<{
+//       id: string;
+//       slug: string;
+//       title: string;
+//       content: string;
+//       image?: string;
+//     }>;
+//   };
+// }

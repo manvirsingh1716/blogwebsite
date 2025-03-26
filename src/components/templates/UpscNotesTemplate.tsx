@@ -1,71 +1,79 @@
-import React from 'react';
-import { BaseTemplateProps } from './types';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Breadcrumb } from '@/components/navigation/Breadcrumb';
-import ContactForm from '@/components/ui/ContactForm';
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Breadcrumb } from "@/components/navigation/Breadcrumb";
+import ContactForm from "@/components/ui/ContactForm";
+import SidebarNavigation from "@/components/navigation/SidebarNavigation";
+import { metadata } from "@/app/(use-navbar)/layout";
+// import { UpscNotesTemplateProps } from "./types";
 
-interface PageMetadata {
-  keywords?: string[];
-  relatedTopics?: string[];
-}
-
-interface PageContent {
+interface PageItem {
+  id: string;
   title: string;
-  subject: string;
-  content: string;
+  slug: string;
+  level: number;
+  children?: PageItem[];
 }
 
-export const UpscNotesTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
-  const { title, content, metadata } = page;
-  const pageContent = content as unknown as PageContent;
-  const { subject = '', content: mainContent = '' } = pageContent;
-  const { keywords = [], relatedTopics = [] } = metadata as PageMetadata;
-
-  const safeKeywords = Array.isArray(keywords) ? keywords : [];
-  const safeRelatedTopics = Array.isArray(relatedTopics) ? relatedTopics : [];
-
-  const renderNavItems = (items: any[], level: number = 1) => {
-    return items.map((item) => (
-      <div key={item.id} className="mb-2">
-        <a
-          href={`/${item.slug}`}
-          className={`block py-2.5 px-4 rounded-lg transition-all duration-200 hover:bg-blue-50 ${
-            level === 1 
-              ? 'font-bold text-lg text-blue-600' 
-              : level === 2 
-              ? 'font-semibold pl-6 text-blue-500' 
-              : 'text-sm pl-8 text-gray-600'
-          }`}
-        >
-          {item.title}
-        </a>
-        {item.children && item.children.length > 0 && (
-          <div className="ml-4 border-l-2 border-blue-200 pl-4">
-            {renderNavItems(item.children, level + 1)}
-          </div>
-        )}
-      </div>
-    ));
+interface UpscNotesTemplateProps {
+  page: {
+    id: string;
+    title: string;
+    content: string;
+    metadata: Record<string, any>;
+    template: {
+      id: string;
+      name: string;
+    };
+    children: PageItem[];
   };
+}
+
+export const UpscNotesTemplate: React.FC<UpscNotesTemplateProps> = ({
+  page,
+}) => {
+  // Debug log for incoming data
+  console.log("UpscNotesTemplate received page:", {
+    id: page.template.id,
+    title: page.title,
+    content: page.content,
+    metadata: page.metadata,
+  });
+
+  const { title, content } = page;
+  const jsonContent = JSON.parse(content);
+
+  if (!jsonContent || typeof jsonContent !== "object") {
+    console.error("Invalid content structure:", content);
+    return <div>Error: Invalid content structure</div>;
+  }
+
+  const {
+    content: mainContent = "",
+  } = jsonContent;
+
+  console.log("Data: ", metadata);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Breadcrumb />
-        
+
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-8">
+          {/* Left Sidebar */}
           <aside className="md:col-span-4 lg:col-span-3">
             <div className="sticky top-24 space-y-6">
+              {/* Navigation Section */}
               <Card className="border border-blue-100 shadow-md bg-white rounded-xl">
                 <CardContent className="p-6">
-                  <h2 className="text-xl font-bold mb-4 text-gray-800">Study Materials</h2>
-                  <div className="space-y-2">
-                    {renderNavItems(page.children)}
-                  </div>
+                  <h2 className="text-xl font-bold mb-4 text-gray-800">
+                    Navigation
+                  </h2>
+                  <SidebarNavigation currentPageId={page.template.id} basePath="/upsc" />
                 </CardContent>
               </Card>
-              
+
+              {/* Contact Form */}
               <Card className="border border-blue-100 shadow-md bg-white rounded-xl">
                 <CardContent className="p-6">
                   <ContactForm />
@@ -74,53 +82,32 @@ export const UpscNotesTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
             </div>
           </aside>
 
+          {/* Main Content */}
           <main className="md:col-span-8 lg:col-span-9">
-            <article className="space-y-8">
-              <div className="bg-white border border-blue-100 rounded-xl shadow-md p-8">
-                <h1 className="text-4xl sm:text-5xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500">
-                  {title}
-                </h1>
-                
-                {safeKeywords.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-8">
-                    {safeKeywords.map((keyword: string, index: number) => (
-                      <Badge 
-                        key={index} 
-                        variant="secondary" 
-                        className="text-sm px-3 py-1.5 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg"
-                      >
-                        {keyword}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-                
-                <div className="prose prose-lg max-w-none prose-headings:text-blue-600 prose-a:text-blue-600 hover:prose-a:text-blue-500 prose-p:text-gray-600">
-                  {subject && (
-                    <div className="mb-6">
-                      <h2 className="text-2xl font-semibold text-blue-600">Subject</h2>
-                      <p className="text-gray-600">{subject}</p>
-                    </div>
-                  )}
-                  <div dangerouslySetInnerHTML={{ __html: mainContent || '' }} />
-                </div>
+            <article className="bg-white border border-blue-100 rounded-xl shadow-md p-8">
+              <h1 className="text-4xl sm:text-5xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500">
+                {title}
+              </h1>
+
+              <div className="flex flex-wrap gap-2 mb-8">
+                {Array.isArray(metadata?.keywords) ? metadata.keywords.map((keyword: string, index: number) => (
+                  <Badge
+                  key={index}
+                  variant="secondary"
+                  className="text-sm px-3 py-1.5 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg"
+                  >
+                  {keyword}
+                  </Badge>
+                )) : null}
               </div>
 
-              {safeRelatedTopics.length > 0 && (
-                <div className="bg-white border border-blue-100 rounded-xl shadow-md p-8">
-                  <h2 className="text-2xl font-bold mb-6 text-gray-800">Related Topics</h2>
-                  <div className="flex flex-wrap gap-3">
-                    {safeRelatedTopics.map((topic: string, index: number) => (
-                      <Badge 
-                        key={index} 
-                        variant="outline" 
-                        className="text-sm px-4 py-2 border-2 border-blue-200 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors duration-200"
-                      >
-                        {topic}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
+              {mainContent ? (
+                <div
+                  className="prose prose-lg max-w-none prose-headings:text-blue-600 prose-a:text-blue-600 hover:prose-a:text-blue-500 prose-p:text-gray-600"
+                  dangerouslySetInnerHTML={{ __html: mainContent }}
+                />
+              ) : (
+                <div className="text-red-500">No content available</div>
               )}
             </article>
           </main>

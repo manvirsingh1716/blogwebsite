@@ -2,13 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Page } from '@prisma/client';
-import { CurrentAffairsForm } from './forms/CurrentAffairsForm';
 import { ArticleForm } from './forms/ArticleForm';
-import { StudyMaterialForm } from './forms/StudyMaterialForm';
 import { GeneralStudiesForm } from './forms/GeneralStudiesForm';
-import { UPSCNotesForm } from './forms/UPSCNotesForm';
-import { BlogForm } from './forms/BlogForm';
-import { AboutPageForm } from './forms/AboutPageForm';
+import { UpscNotesForm } from './forms/UPSCNotesForm';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { env } from '@/config/env';
@@ -400,13 +396,9 @@ export function PageForm({ editPage = null }: PageFormProps) {
 
     // Map template IDs to form components
     const templateForms: Record<string, React.ComponentType<any>> = {
-      'current-affairs': CurrentAffairsForm,
       'article': ArticleForm,
-      'study-material': StudyMaterialForm,
       'general-studies': GeneralStudiesForm,
-      'upsc-notes': UPSCNotesForm,
-      'blog': BlogForm,
-      'about': AboutPageForm,
+      'upsc-notes': UpscNotesForm,
     };
 
     const FormComponent = templateForms[currentTemplate.id];

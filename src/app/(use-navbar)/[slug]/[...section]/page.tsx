@@ -1,29 +1,22 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import prisma from '@/lib/db';
 import type { BaseTemplateProps } from '@/components/templates/types';
 import { UpscNotesTemplate } from '@/components/templates/UpscNotesTemplate';
 import { ArticleTemplate } from '@/components/templates/ArticleTemplate';
-import { AboutTemplate } from '@/components/templates/AboutTemplate';
-import { BlogTemplate } from '@/components/templates/BlogTemplate';
 import { GeneralStudiesTemplate } from '@/components/templates/GeneralStudiesTemplate';
-import { CurrentAffairsTemplate } from '@/components/templates/CurrentAffairsTemplate';
 import { env } from '@/config/env';
 
 // Map template IDs to components
-const TEMPLATE_MAP: Record<string, React.FC<BaseTemplateProps>> = {
+const TEMPLATE_MAP: Record<string, React.FC<any>> = {
   'upsc-notes': UpscNotesTemplate,
   'article': ArticleTemplate,
-  'about': AboutTemplate,
-  'blog': BlogTemplate,
   'general-studies': GeneralStudiesTemplate,
-  'current-affairs': CurrentAffairsTemplate,
   'study-material': ArticleTemplate, // Using ArticleTemplate as base for study material
 };
 
 async function getPage(slug: string, section: string[]): Promise<BaseTemplateProps['page'] | null> {
   try {
-    const fullPath = `${slug}-${section.join('-')}`;
+    const fullPath = `${slug} ${section.join(' ')}`; // slugs seperated by space will be rejoined with / in the backend 
     console.log('Fetching page for path:', fullPath);
 
     const response = await fetch(`${env.API}/page/slug/${fullPath}`);
@@ -48,13 +41,6 @@ async function getPage(slug: string, section: string[]): Promise<BaseTemplatePro
       console.log('Page not found for path:', fullPath);
       return null;
     }
-
-    console.log('Found page:', {
-      title: page.title,
-      templateId: page.template.id,
-      hasParent: !!page.parent,
-      childCount: page.children.length
-    });
 
     return page as BaseTemplateProps['page'];
   } catch (error) {
