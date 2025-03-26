@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://luc:luc@localhost/mydb"
+  url      = "postgresql://luc:luc@localhost:5432/mydb"
 }
 
 model Template {

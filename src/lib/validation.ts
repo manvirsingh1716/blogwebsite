@@ -1,5 +1,6 @@
 import { Template } from '@prisma/client';
 import prisma from './db';
+import { env } from '@/config/env';
 
 interface ValidationError {
   field: string;
@@ -28,9 +29,12 @@ export class ValidationService {
     const errors: ValidationError[] = [];
 
     // Fetch template
-    const template = await prisma.template.findUnique({
-      where: { id: templateId }
-    });
+    const res = await fetch(`${env.API}/template/${templateId}`);
+    const response = await res.json();
+    const template = response.data;
+    // const template = await prisma.template.findUnique({
+    //   where: { id: templateId }
+    // });
 
     if (!template) {
       errors.push({ field: 'templateId', message: 'Template not found' });

@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { env } from '../../config/env';
+import { env } from '../../../config/env';
 import Cookies from 'js-cookie';
 
 const Login = () => {
