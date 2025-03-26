@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
-import Navbar from "@/components/ui/navbar";
-import { getNavigationTree } from "@/lib/navigation";
+import Navbar from "@/components/Navbar/navbar";
+import Footer from "@/components/Footer/Footer";
+import { getNavigationTree, getFooterLinks } from "@/lib/navigation";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,12 +20,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const navigation = await getNavigationTree();
+  const footerSections = await getFooterLinks();
 
   return (
     <html lang="en">
       <body className={inter.className}>
         <Navbar navigation={navigation} />
         {children}
+        <Footer footerSections={footerSections} />
       </body>
     </html>
   );

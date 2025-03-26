@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
-// import logo from 'path/to/logo.png'
-import SearchBar from './Navbar/SearchBar'
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import logo from '../../../public/next.svg'
+import SearchBar from "./SearchBar";
 
 interface NavItem {
-  slug: string
-  title: string
-  children: NavItem[]
+  slug: string;
+  title: string;
+  children: NavItem[];
 }
 
 interface NavbarProps {
-  navigation: NavItem[]
+  navigation: NavItem[];
 }
 
 function NestedNavigation({
@@ -172,7 +172,7 @@ export default function Navbar({ navigation }: NavbarProps) {
               <div className="flex-shrink-0 min-w-[40px]">
                 <Link href="/" passHref>
                   <Image
-                    src={"/public/logo.png"}
+                    src={logo}
                     alt="99Notes"
                     width={40}
                     height={40}
