@@ -1,6 +1,6 @@
-"use client"
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+"use client";
+import React, { useEffect, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface TOCItem {
   id: string;
@@ -8,17 +8,23 @@ interface TOCItem {
   level: number;
 }
 
-export const TableOfContents = () => {
+interface TableOfContentsProps {
+  content?: string;
+}
+
+export const TableOfContents: React.FC<TableOfContentsProps> = ({
+  content,
+}) => {
   const [headings, setHeadings] = useState<TOCItem[]>([]);
-  const [activeId, setActiveId] = useState<string>('');
+  const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
     // Get all headings from the article
-    const elements = Array.from(document.querySelectorAll('h1, h2, h3, h4'))
-      .filter(element => element.id) // Only get elements with IDs
-      .map(element => ({
+    const elements = Array.from(document.querySelectorAll("h1, h2, h3, h4"))
+      .filter((element) => element.id) // Only get elements with IDs
+      .map((element) => ({
         id: element.id,
-        text: element.textContent || '',
+        text: element.textContent || "",
         level: parseInt(element.tagName.charAt(1)),
       }));
 
@@ -26,7 +32,7 @@ export const TableOfContents = () => {
 
     // Set up intersection observer
     const callback = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
           setActiveId(entry.target.id);
         }
@@ -34,10 +40,10 @@ export const TableOfContents = () => {
     };
 
     const observer = new IntersectionObserver(callback, {
-      rootMargin: '-100px 0px -66%',
+      rootMargin: "-100px 0px -66%",
     });
 
-    elements.forEach(heading => {
+    elements.forEach((heading) => {
       const element = document.getElementById(heading.id);
       if (element) {
         observer.observe(element);
@@ -59,13 +65,17 @@ export const TableOfContents = () => {
               key={heading.id}
               href={`#${heading.id}`}
               className={`block text-sm hover:text-blue-500 transition-colors
-                ${heading.level === 1 ? 'font-medium' : ''}
-                ${heading.level > 1 ? `pl-${(heading.level - 1) * 4}` : ''}
-                ${activeId === heading.id ? 'text-blue-500' : 'text-gray-600 dark:text-gray-400'}`}
+                ${heading.level === 1 ? "font-medium" : ""}
+                ${heading.level > 1 ? `pl-${(heading.level - 1) * 4}` : ""}
+                ${
+                  activeId === heading.id
+                    ? "text-blue-500"
+                    : "text-gray-600 dark:text-gray-400"
+                }`}
               onClick={(e) => {
                 e.preventDefault();
                 document.getElementById(heading.id)?.scrollIntoView({
-                  behavior: 'smooth',
+                  behavior: "smooth",
                 });
               }}
             >
