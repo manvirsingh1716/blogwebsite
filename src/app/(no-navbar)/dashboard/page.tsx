@@ -1,6 +1,8 @@
+"use client";
 import { Metadata } from "next"
 import { useRouter } from 'next/navigation';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
+import { FaPlus, FaEdit } from 'react-icons/fa';
 
 const inter = Inter({ subsets: ['latin'] });
 const plusJakarta = Plus_Jakarta_Sans({ subsets: ['latin'] });
@@ -21,12 +23,8 @@ const mockArticles = [
   },
 ];
 
-export const metadata: Metadata = {
-  title: "Article Dashboard",
-  description: "Manage and create your articles",
-}
 
-export default function Home() {
+export default function Dashboard() {
   const router = useRouter();
 
   return (
@@ -72,7 +70,7 @@ export default function Home() {
               >
                 <div className="relative flex items-center gap-4 px-8 py-5">
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/10">
-                    <Plus className="h-6 w-6 text-white" />
+                    <FaPlus className="h-6 w-6 text-white" />
                   </div>
                   <div className="text-left">
                     <h3 className={`${plusJakarta.className} text-[1.125rem] font-semibold tracking-wide text-white mb-0.5`}>
@@ -89,7 +87,7 @@ export default function Home() {
               >
                 <div className="relative flex items-center gap-4 px-8 py-5">
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100">
-                    <Edit className="h-6 w-6 text-slate-700" />
+                    <FaEdit className="h-6 w-6 text-slate-700" />
                   </div>
                   <div className="text-left">
                     <h3 className={`${plusJakarta.className} text-[1.125rem] font-semibold tracking-wide text-slate-800 mb-0.5`}>
