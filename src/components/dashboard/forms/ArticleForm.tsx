@@ -79,7 +79,7 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
         <div className="mt-1">
           <TiptapEditor
             content={watch('content.mainContent')}
-            setContent={handleEditorChange}
+            onChange={handleEditorChange}
           />
         </div>
         {errors.content?.mainContent && (
