@@ -49,7 +49,7 @@ const CurrentAffairsIndex = () => {
                         {item.title}
                       </h3>
                     </div>
-                    <p className="text-gray-600">
+                    <p className="text-red-600">
                       {getItemDescription(item.title)}
                     </p>
                   </div>

@@ -70,60 +70,60 @@ export function PageList() {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-blue-100">
+    <div className="overflow-x-auto bg-white shadow-sm rounded-lg">
+      <table className="min-w-full divide-y divide-slate-200">
         <thead>
-          <tr className="bg-blue-50/50">
-            <th className="px-6 py-3 text-left text-xs font-semibold text-blue-500 uppercase tracking-wider">
+          <tr className="bg-slate-50">
+            <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
               Title
             </th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-blue-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
               Path
             </th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-blue-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
               Template
             </th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-blue-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
               Last Updated
             </th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-blue-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
               Actions
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-blue-100">
+        <tbody className="bg-white divide-y divide-slate-200">
           {pages.map((page) => (
-            <tr key={page.id} className="hover:bg-blue-50/50 transition-colors duration-150">
-              <td className="px-6 py-4 text-sm font-medium text-gray-600">
+            <tr key={page.id} className="hover:bg-slate-50 transition-colors duration-150">
+              <td className="px-6 py-4 text-sm font-medium text-slate-900">
                 {page.title}
               </td>
-              <td className="px-6 py-4 text-sm text-gray-500">
+              <td className="px-6 py-4 text-sm text-slate-600">
                 {page.slug}
               </td>
-              <td className="px-6 py-4 text-sm text-gray-500">
+              <td className="px-6 py-4 text-sm text-slate-600">
                 {page.templateId}
               </td>
-              <td className="px-6 py-4 text-sm text-gray-500">
+              <td className="px-6 py-4 text-sm text-slate-600">
                 {new Date(page.updatedAt).toLocaleDateString()}
               </td>
               <td className="px-6 py-4 text-sm font-medium space-x-3">
                 <Link
                   href={`/preview/${page.slug}`}
-                  className="inline-flex items-center text-gray-400 hover:text-blue-400 transition-colors duration-150"
+                  className="inline-flex items-center text-slate-400 hover:text-slate-600 transition-colors duration-150"
                   title="Preview"
                 >
                   <EyeIcon className="h-5 w-5" />
                 </Link>
                 <Link
                   href={`/dashboard/edit/${page.id}`}
-                  className="inline-flex items-center text-gray-400 hover:text-blue-400 transition-colors duration-150"
+                  className="inline-flex items-center text-slate-400 hover:text-slate-600 transition-colors duration-150"
                   title="Edit"
                 >
                   <PencilIcon className="h-5 w-5" />
                 </Link>
                 <button
                   onClick={() => handleDelete(page.id)}
-                  className="inline-flex items-center text-gray-400 hover:text-red-400 transition-colors duration-150"
+                  className="inline-flex items-center text-slate-400 hover:text-red-500 transition-colors duration-150"
                   title="Delete"
                 >
                   <TrashIcon className="h-5 w-5" />
