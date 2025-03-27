@@ -132,15 +132,16 @@ export default function Navbar({ navigation }: NavbarProps) {
       <nav className="fixed w-full top-0 z-50">
         {/* Top Bar - Hidden when scrolled */}
         <div
-          className={`bg-[#E67E22] w-full border-b border-[#e69b12] transition-all duration-300 ${
-            isScrolled ? "h-0 overflow-hidden" : "h-12"
+          className={`bg-gradient-to-r from-orange-500 to-orange-600 w-full transition-all duration-300 ${
+            isScrolled ? "h-0 overflow-hidden opacity-0" : "h-12"
           }`}
         >
-          <div className="container mx-auto px-6 flex justify-between items-center h-10">
-            {/* Shop Now Button - Left Side */}
+          <div className="container mx-auto px-6 flex justify-between items-center h-12">
             <div className="mt-1.75">
               <Link href="/shop" passHref>
-                <span className="text-[13px] font-bold tracking-wide text-white hover:text-white/90 transition-colors bg-[#d35400] px-4 py-1.5 rounded">
+                <span className="text-[13px] font-bold tracking-wide text-white hover:text-white/90 transition-colors 
+                               bg-gradient-to-r from-orange-700 to-orange-600 hover:from-orange-600 hover:to-orange-500 
+                               px-4 py-1.5 rounded-full shadow-sm hover:shadow-md transition-all duration-300">
                   Shop Now
                 </span>
               </Link>
@@ -168,7 +169,7 @@ export default function Navbar({ navigation }: NavbarProps) {
 
         {/* Main Navbar */}
         <div
-          className={` w-full transition-all duration-300 ${
+          className={` w-full transition-all duration-300 -mt-[1px] ${
             isScrolled
               ? "bg-gradient-to-r from-[#f4d03f] via-[#f5ab35] to-[#f39c12] shadow-lg"
               : "bg-white"
@@ -194,10 +195,13 @@ export default function Navbar({ navigation }: NavbarProps) {
                 <NestedNavigation items={navigation} />
                 <Link href="/about" passHref>
                   <span
-                    className={`text-[14px] whitespace-nowrap font-bold tracking-wide py-6 px-2 xl:px-3 transition-colors duration-300 ${
+                    className={`text-[14px] whitespace-nowrap font-bold tracking-wide py-6 px-2 xl:px-3 
+                            transition-all duration-300 relative after:absolute after:bottom-5 after:left-2 
+                            after:w-[calc(100%-16px)] after:h-0.5 after:bg-blue-600 after:transform after:scale-x-0 
+                            after:transition-transform after:duration-300 hover:after:scale-x-100 ${
                       isScrolled
-                        ? "text-black hover:text-gray-800"
-                        : "text-gray-800 hover:text-blue-700"
+                        ? "text-gray-800 hover:text-blue-700"
+                        : "text-gray-700 hover:text-blue-600"
                     }`}
                   >
                     About 99Notes
@@ -214,18 +218,19 @@ export default function Navbar({ navigation }: NavbarProps) {
                     Blogs
                   </span>
                 </Link>
+              </div>
 
-                {/* Search Bar */}
-                <div className="ml-2 xl:ml-4">
-                  <SearchBar />
-                </div>
+              {/* Search Bar - Moved to rightmost */}
+              <div className="hidden lg:block ml-auto">
+                <SearchBar />
               </div>
 
               {/* Mobile menu button */}
               <div className="lg:hidden">
                 <button
                   onClick={() => setIsOpen(!isOpen)}
-                  className="inline-flex items-center justify-center p-2 rounded-md text-gray-800 hover:text-blue-700 hover:bg-gray-100 focus:outline-none"
+                  className="inline-flex items-center justify-center p-2 rounded-full text-gray-700 
+                         hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition-all duration-300"
                 >
                   <span className="sr-only">Open main menu</span>
                   {isOpen ? (
@@ -267,13 +272,20 @@ export default function Navbar({ navigation }: NavbarProps) {
           </div>
         </div>
 
-        {/* Mobile menu, show/hide based on menu state */}
+        {/* Mobile menu */}
         <div
-          className={`lg:hidden ${
-            isOpen ? "block" : "hidden"
-          } bg-white shadow-lg`}
+          className={`lg:hidden transform transition-all duration-300 ease-in-out ${
+            isOpen 
+              ? "translate-y-0 opacity-100" 
+              : "-translate-y-2 opacity-0 pointer-events-none"
+          } bg-white/95 backdrop-blur-lg shadow-lg`}
         >
           <div className="px-2 pt-2 pb-3 space-y-1">
+            {/* Search Bar in mobile menu */}
+            <div className="px-3 py-2">
+              <SearchBar />
+            </div>
+            
             {navigation.map((item) => (
               <div key={item.slug} className="py-1">
                 <div className="flex items-center justify-between">
@@ -337,6 +349,18 @@ export default function Navbar({ navigation }: NavbarProps) {
                 )}
               </div>
             ))}
+            
+            {/* About and Blogs links in mobile menu */}
+            <Link href="/about" passHref>
+              <span className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md">
+                About 99Notes
+              </span>
+            </Link>
+            <Link href="/blogs" passHref>
+              <span className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md">
+                Blogs
+              </span>
+            </Link>
           </div>
         </div>
       </nav>
