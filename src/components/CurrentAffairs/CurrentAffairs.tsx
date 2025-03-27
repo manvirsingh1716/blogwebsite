@@ -1,10 +1,11 @@
 import React from 'react';
 import CurrentAffairsCard from './CurrentAffairsCard';
+import { StaticImageData } from 'next/image';
 
 // Define the type for each item in current affairs data
 interface CurrentAffairsItem {
   title: string;
-  icon: string;
+  icon: string | { image: StaticImageData };
   link: string;
 }
 

@@ -32,13 +32,32 @@ export class ValidationService {
     const res = await fetch(`${env.API}/template/${templateId}`);
     const response = await res.json();
     const template = response.data;
-    // const template = await prisma.template.findUnique({
-    //   where: { id: templateId }
-    // });
 
     if (!template) {
       errors.push({ field: 'templateId', message: 'Template not found' });
       return errors;
+    }
+
+    // Parse content if it's a string (JSON)
+    let contentObj = data.content;
+    if (typeof data.content === 'string') {
+      try {
+        contentObj = JSON.parse(data.content);
+      } catch (e) {
+        errors.push({ field: 'content', message: 'Invalid JSON content format' });
+        return errors;
+      }
+    }
+
+    // Parse metadata if it's a string (JSON)
+    let metadataObj = data.metadata;
+    if (typeof data.metadata === 'string') {
+      try {
+        metadataObj = JSON.parse(data.metadata);
+      } catch (e) {
+        errors.push({ field: 'metadata', message: 'Invalid JSON metadata format' });
+        return errors;
+      }
     }
 
     // Get template requirements using template ID
@@ -51,10 +70,16 @@ export class ValidationService {
     // Validate content
     if (requirements.content.required) {
       for (const field of requirements.content.required) {
-        if (!data.content?.[field]) {
+        if (!contentObj?.[field]) {
           errors.push({
             field: `content.${field}`,
             message: `${field} is required`
+          });
+        } else if (requirements.content.properties[field].minLength && 
+                  contentObj[field].length < requirements.content.properties[field].minLength) {
+          errors.push({
+            field: `content.${field}`,
+            message: `${field} must be at least ${requirements.content.properties[field].minLength} characters`
           });
         }
       }
@@ -63,7 +88,7 @@ export class ValidationService {
     // Validate metadata
     if (requirements.metadata.required) {
       for (const field of requirements.metadata.required) {
-        if (!data.metadata?.[field]) {
+        if (!metadataObj?.[field]) {
           errors.push({
             field: `metadata.${field}`,
             message: `${field} is required in metadata`
@@ -83,8 +108,8 @@ const templateRequirements: Record<string, TemplateRequirement> = {
       type: 'object',
       required: ['title', 'content'],
       properties: {
-        title: { type: 'string' },
-        content: { type: 'object' }
+        title: { type: 'string', minLength: 2 },
+        content: { type: 'string', minLength: 10 }
       }
     },
     metadata: {
@@ -100,8 +125,9 @@ const templateRequirements: Record<string, TemplateRequirement> = {
       type: 'object',
       required: ['title', 'content'],
       properties: {
-        title: { type: 'string' },
-        content: { type: 'string' }
+        title: { type: 'string', minLength: 2 },
+        content: { type: 'string', minLength: 10 },
+        image: { type: 'string' }
       }
     },
     metadata: {
@@ -115,17 +141,28 @@ const templateRequirements: Record<string, TemplateRequirement> = {
   'general-studies': {
     content: {
       type: 'object',
-      required: ['title', 'paper', 'topic', 'subtopic', 'content', 'keyPoints'],
+      required: ['title', 'content'],
       properties: {
         title: { type: 'string', minLength: 2 },
-        paper: { type: 'string', minLength: 1 },
-        topic: { type: 'string', minLength: 2 },
-        subtopic: { type: 'string', minLength: 2 },
         content: { type: 'string', minLength: 10 },
-        importanceLevel: { type: 'string', enum: ['low', 'medium', 'high'] },
-        previousYearQuestions: { type: 'string' },
-        keyPoints: { type: 'string', minLength: 10 },
-        sources: { type: 'string' }
+        image: { type: 'string' }
+      }
+    },
+    metadata: {
+      type: 'object',
+      required: ['lastUpdated'],
+      properties: {
+        lastUpdated: { type: 'string' }
+      }
+    }
+  },
+  'upsc-notes': {
+    content: {
+      type: 'object',
+      required: ['title', 'content'],
+      properties: {
+        title: { type: 'string', minLength: 2 },
+        content: { type: 'string', minLength: 10 }
       }
     },
     metadata: {
@@ -141,9 +178,9 @@ const templateRequirements: Record<string, TemplateRequirement> = {
       type: 'object',
       required: ['title', 'subject', 'content'],
       properties: {
-        title: { type: 'string' },
-        subject: { type: 'string' },
-        content: { type: 'string' }
+        title: { type: 'string', minLength: 2 },
+        subject: { type: 'string', minLength: 2 },
+        content: { type: 'string', minLength: 10 }
       }
     },
     metadata: {
@@ -163,11 +200,11 @@ const templateRequirements: Record<string, TemplateRequirement> = {
           type: 'object',
           required: ['title', 'subtitle'],
           properties: {
-            title: { type: 'string' },
-            subtitle: { type: 'string' }
+            title: { type: 'string', minLength: 2 },
+            subtitle: { type: 'string', minLength: 2 }
           }
         },
-        mission: { type: 'string' },
+        mission: { type: 'string', minLength: 10 },
         veterans: {
           type: 'array',
           items: {

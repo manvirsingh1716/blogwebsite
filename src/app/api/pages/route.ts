@@ -110,8 +110,34 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
 
+    // Parse content and metadata if they are strings
+    let contentObj = data.content;
+    let metadataObj = data.metadata;
+    
+    try {
+      if (typeof data.content === 'string') {
+        contentObj = JSON.parse(data.content);
+      }
+      
+      if (typeof data.metadata === 'string') {
+        metadataObj = JSON.parse(data.metadata);
+      }
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Invalid JSON format in content or metadata' },
+        { status: 400 }
+      );
+    }
+
+    // Update data with parsed objects
+    const processedData = {
+      ...data,
+      content: contentObj,
+      metadata: metadataObj
+    };
+
     // Validate template-specific data
-    const validationErrors = await ValidationService.validatePageData(data, data.templateId);
+    const validationErrors = await ValidationService.validatePageData(processedData, data.templateId);
     if (validationErrors.length > 0) {
       return NextResponse.json(
         { error: 'Validation failed', details: validationErrors },
@@ -143,8 +169,8 @@ export async function POST(request: Request) {
       data: {
         slug: fullSlug,
         title: data.title,
-        content: data.content || {},
-        metadata: data.metadata || {},
+        content: contentObj,
+        metadata: metadataObj,
         templateId: data.templateId,
         level,
         showInNav: level <= 4,
@@ -153,7 +179,10 @@ export async function POST(request: Request) {
       include: pageInclude
     });
 
-    return NextResponse.json(page);
+    return NextResponse.json({
+      success: true,
+      data: page
+    });
   } catch (error) {
     console.error('Error creating page:', error);
     if (error instanceof Error) {

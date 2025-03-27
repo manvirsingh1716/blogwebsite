@@ -1,11 +1,7 @@
 import { env } from '@/config/env';
 import prisma from './db'
-
-interface NavItem {
-  slug: string
-  title: string
-  children: NavItem[]
-}
+import { NavItem } from '@/types/navigation';
+import { staticNavigationItems } from '@/config/staticNavigation';
 
 export async function getNavigationTree(): Promise<NavItem[]> {
   const response = await fetch(`${env.API}/page/order`);
@@ -55,7 +51,15 @@ export async function getNavigationTree(): Promise<NavItem[]> {
     });
   });
 
-  return tree
+  // Merge static navigation items with the dynamic ones
+  // First, filter out any potential conflicts (items with the same slug)
+  const dynamicTopLevelSlugs = tree.map(item => item.slug);
+  const filteredStaticItems = staticNavigationItems.filter(
+    item => !dynamicTopLevelSlugs.includes(item.slug)
+  );
+
+  // Combine the trees
+  return [...tree, ...filteredStaticItems];
 }
 
 export async function getFooterLinks(): Promise<NavItem[]> {

@@ -2,6 +2,8 @@ import React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { navigationSections } from '@/config/currentAffairs';
+import ContactForm from '@/components/ui/ContactForm';
+import ContactMap from '@/components/ui/ContactMap';
 
 const CurrentAffairsIndex = () => {
   return (
@@ -27,49 +29,6 @@ const CurrentAffairsIndex = () => {
       </div>
 
       <div className="container mx-auto px-4 py-12">
-        {/* Quick Access Section */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Today's Updates</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Link href="/current-affairs/daily/news-analysis" className="group">
-              <div className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
-                <div className="flex items-center mb-4">
-                  <span className="text-2xl mr-3">📰</span>
-                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">Daily News Analysis</h3>
-                </div>
-                <p className="text-gray-600 text-sm">Comprehensive analysis of today's important events</p>
-              </div>
-            </Link>
-            <Link href="/current-affairs/daily/hindu-editorial" className="group">
-              <div className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
-                <div className="flex items-center mb-4">
-                  <span className="text-2xl mr-3">📑</span>
-                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">The Hindu Editorial</h3>
-                </div>
-                <p className="text-gray-600 text-sm">In-depth analysis of today's editorial</p>
-              </div>
-            </Link>
-            <Link href="/current-affairs/daily/mcq-quiz" className="group">
-              <div className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
-                <div className="flex items-center mb-4">
-                  <span className="text-2xl mr-3">❓</span>
-                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">Daily MCQ Quiz</h3>
-                </div>
-                <p className="text-gray-600 text-sm">Test your knowledge with daily quiz</p>
-              </div>
-            </Link>
-            <Link href="/current-affairs/daily/answer-writing" className="group">
-              <div className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
-                <div className="flex items-center mb-4">
-                  <span className="text-2xl mr-3">✍️</span>
-                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">Answer Writing</h3>
-                </div>
-                <p className="text-gray-600 text-sm">Practice answer writing with daily questions</p>
-              </div>
-            </Link>
-          </div>
-        </div>
-
         {/* Main Categories */}
         {navigationSections?.map((section, index) => (
           <div key={index} className="mb-16">
@@ -79,7 +38,13 @@ const CurrentAffairsIndex = () => {
                 <Link key={itemIndex} href={item.path} className="group">
                   <div className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
                     <div className="flex items-center mb-4">
-                      <span className="text-2xl mr-3">{item.icon}</span>
+                      <span className="text-2xl mr-3">
+                        {typeof item.icon === 'object' && item.icon && 'image' in item.icon ? (
+                          <img src={item.icon.image.src} alt={item.title} width={24} height={24} />
+                        ) : (
+                          item.icon
+                        )}
+                      </span>
                       <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">
                         {item.title}
                       </h3>
@@ -93,28 +58,10 @@ const CurrentAffairsIndex = () => {
             </div>
           </div>
         ))}
-
-        {/* Features Section */}
-        <div className="mt-16">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Why Choose Our Current Affairs?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <span className="text-3xl mb-4 block">🔄</span>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Daily Updates</h3>
-              <p className="text-gray-600">Get comprehensive daily updates with detailed analysis of important events</p>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <span className="text-3xl mb-4 block">🎯</span>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">UPSC-Focused</h3>
-              <p className="text-gray-600">Content specifically curated keeping UPSC syllabus and exam pattern in mind</p>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <span className="text-3xl mb-4 block">📝</span>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Practice Questions</h3>
-              <p className="text-gray-600">Regular MCQs and answer writing questions for better preparation</p>
-            </div>
-          </div>
-        </div>
+      </div>
+      <div className="flex justify-between">
+        <ContactForm />
+        <ContactMap />
       </div>
     </div>
   );

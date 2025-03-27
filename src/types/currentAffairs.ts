@@ -24,7 +24,7 @@ export interface PageConfig {
   title: string;
   description: string;
   topics: string[];
-  icon?: string;
+  icon?: string | { image: any };
 }
 
 export interface SectionConfig {
@@ -34,7 +34,7 @@ export interface SectionConfig {
 export interface NavigationItem {
   title: string;
   path: string;
-  icon?: string;
+  icon?: string | { image: any };
 }
 
 export interface NavigationSection {
@@ -70,4 +70,4 @@ export interface ArticleResponse {
   relatedArticles: RelatedArticle[];
   nextArticle?: RelatedArticle;
   previousArticle?: RelatedArticle;
-} 
+}

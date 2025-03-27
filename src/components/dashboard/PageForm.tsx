@@ -252,56 +252,10 @@ export function PageForm({ editPage = null }: PageFormProps) {
         slug: fullPath,
         templateId: currentTemplate.id,
         parentId: parentId || null,
-        content:
-          currentTemplate.id === "about"
-            ? {
-                hero: {
-                  title: formData.hero?.title || "",
-                  subtitle: formData.hero?.subtitle || "",
-                },
-                mission: formData.mission || "",
-                veterans: Array.isArray(formData.veterans)
-                  ? formData.veterans.map((v: TeamMember) => ({
-                      name: v.name,
-                      role: v.role,
-                      bio: v.bio,
-                    }))
-                  : [],
-                coreMembers: Array.isArray(formData.coreMembers)
-                  ? formData.coreMembers.map((m: TeamMember) => ({
-                      name: m.name,
-                      role: m.role,
-                      bio: m.bio,
-                    }))
-                  : [],
-              }
-            : currentTemplate.id === "general-studies"
-            ? {
-                title: formData.title,
-                paper: formData.paper,
-                topic: formData.topic,
-                subtopic: formData.subtopic,
-                content: formData.content,
-                importanceLevel: formData.importanceLevel || "medium",
-                previousYearQuestions: formData.previousYearQuestions || "",
-                keyPoints: formData.keyPoints,
-                sources: formData.sources || "",
-              }
-            : currentTemplate.id === "study-material"
-            ? {
-                title: formData.title || "",
-                subject: formData.subject || "",
-                content: formData.content || "",
-              }
-            : formData,
+        content: processContentByTemplate(currentTemplate.id, formData),
         metadata: {
           lastUpdated: new Date().toISOString(),
-          teamSize:
-            formData.metadata?.teamSize ||
-            (currentTemplate.id === "about"
-              ? (formData.veterans?.length || 0) +
-                (formData.coreMembers?.length || 0)
-              : 0),
+          teamSize: 0,
         },
         level: getCurrentLevel(),
         showInNav: true,
@@ -312,58 +266,36 @@ export function PageForm({ editPage = null }: PageFormProps) {
         throw new Error("Title is required");
       }
 
-      if (currentTemplate.id === "general-studies") {
-        if (!pageData.content.paper) throw new Error("Paper is required");
-        if (!pageData.content.topic) throw new Error("Topic is required");
-        if (!pageData.content.subtopic) throw new Error("Subtopic is required");
-        if (!pageData.content.content || pageData.content.content.length < 10) {
-          throw new Error("Content must be at least 10 characters");
-        }
-        if (
-          !pageData.content.keyPoints ||
-          pageData.content.keyPoints.length < 10
-        ) {
-          throw new Error("Key points must be at least 10 characters");
-        }
-      } else if (currentTemplate.id === "study-material") {
-        if (!pageData.content.subject) throw new Error("Subject is required");
-        if (!pageData.content.content || pageData.content.content.length < 10) {
-          throw new Error("Content must be at least 10 characters");
-        }
-      }
+      // Validate content based on template type
+      validateContentByTemplate(currentTemplate.id, pageData.content);
 
       console.log("Sending page data:", pageData);
 
-      // const response = await fetch('/api/pages', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(pageData),
-      // });
-
-      const pageData2 = {
+      // Prepare data for API submission
+      const apiPageData = {
         ...pageData,
         content: JSON.stringify(pageData.content),
         metadata: JSON.stringify(pageData.metadata),
       };
-      const response2 = await fetch(`${env.API}/page`, {
+
+      // Submit to API
+      const response = await fetch(`${env.API}/page`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(pageData2),
+        body: JSON.stringify(apiPageData),
       });
-      if (response2.ok) {
-        console.log("Working!");
-      } else console.log("Not working!");
 
-      // if (!response.ok) {
-      //   const errorData = await response.json();
-      //   throw new Error(errorData.error || 'Failed to create page');
-      // }
+      console.log("API Response Status:", response.status);
+      
+      const responseData = await response.json().catch(() => ({}));
+      console.log("API Response Data:", responseData);
 
-      // const result = await response.json();
-      // console.log('Created page:', result);
+      if (!response.ok) {
+        throw new Error(responseData.message || responseData.error || 'Failed to create page');
+      }
 
       // Reset form and refresh
       setSelectedTemplate("");
@@ -377,6 +309,63 @@ export function PageForm({ editPage = null }: PageFormProps) {
     } catch (error) {
       console.error('Error creating page:', error);
       setError(error instanceof Error ? error.message : 'Failed to create page');
+    }
+  };
+
+  // Process content based on template type
+  const processContentByTemplate = (templateId: string, formData: PageFormData) => {
+    switch (templateId) {
+      case "article":
+        return {
+          title: formData.title || "",
+          content: formData.content || "",
+          image: formData.image || "",
+        };
+      
+      case "general-studies":
+        return {
+          title: formData.title || "",
+          content: formData.content || "",
+          image: formData.image || "",
+        };
+      
+      case "upsc-notes":
+        return {
+          title: formData.title || "",
+          content: formData.content || "",
+        };
+      
+      default:
+        return formData;
+    }
+  };
+
+  // Validate content based on template type
+  const validateContentByTemplate = (templateId: string, content: any) => {
+    switch (templateId) {
+      case "article":
+        if (!content.title) throw new Error("Title is required");
+        if (!content.content || content.content.length < 10) {
+          throw new Error("Content must be at least 10 characters");
+        }
+        break;
+      
+      case "general-studies":
+        if (!content.title) throw new Error("Title is required");
+        if (!content.content || content.content.length < 10) {
+          throw new Error("Content must be at least 10 characters");
+        }
+        break;
+      
+      case "upsc-notes":
+        if (!content.title) throw new Error("Title is required");
+        if (!content.content || content.content.length < 10) {
+          throw new Error("Content must be at least 10 characters");
+        }
+        break;
+      
+      default:
+        break;
     }
   };
 

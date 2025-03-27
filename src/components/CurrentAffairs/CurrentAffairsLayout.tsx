@@ -1,11 +1,14 @@
 "use client";
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { StaticImageData } from 'next/image';
+import newsImage from '../../../public/news.png';
 
 interface NavItem {
   title: string;
   path: string;
-  icon?: string;
+  icon?: string | { image: StaticImageData };
 }
 
 interface NavSection {
@@ -17,29 +20,29 @@ const navigationSections: NavSection[] = [
   {
     title: "Daily Current Affairs",
     items: [
-      { title: "Daily News Analysis", path: "/current-affairs/daily/news-analysis", icon: "📰" },
-      { title: "The Hindu Editorial", path: "/current-affairs/daily/hindu-editorial", icon: "📑" },
-      { title: "Indian Express Editorial", path: "/current-affairs/daily/express-editorial", icon: "📋" },
-      { title: "PIB Analysis", path: "/current-affairs/daily/pib", icon: "🏛️" },
-      { title: "Daily MCQ Quiz", path: "/current-affairs/daily/mcq-quiz", icon: "❓" },
-      { title: "Answer Writing Practice", path: "/current-affairs/daily/answer-writing", icon: "✍️" },
+      { title: "Daily News Analysis", path: "/current-affairs/daily/news-analysis", icon: { image: newsImage } },
+      { title: "The Hindu Editorial", path: "/current-affairs/daily/hindu-editorial", icon: { image: newsImage } },
+      { title: "Indian Express Editorial", path: "/current-affairs/daily/express-editorial", icon: { image: newsImage } },
+      { title: "PIB Analysis", path: "/current-affairs/daily/pib", icon: { image: newsImage } },
+      { title: "Daily MCQ Quiz", path: "/current-affairs/daily/mcq-quiz", icon: { image: newsImage } },
+      { title: "Answer Writing Practice", path: "/current-affairs/daily/answer-writing", icon: { image: newsImage } },
     ]
   },
   {
     title: "Monthly Current Affairs",
     items: [
-      { title: "Monthly Compilation", path: "/current-affairs/monthly/compilation", icon: "📚" },
-      { title: "Yojana Magazine", path: "/current-affairs/monthly/yojana", icon: "📖" },
-      { title: "Kurukshetra Magazine", path: "/current-affairs/monthly/kurukshetra", icon: "📔" },
-      { title: "Science Reporter", path: "/current-affairs/monthly/science-reporter", icon: "🔬" },
+      { title: "Monthly Compilation", path: "/current-affairs/monthly/compilation", icon: { image: newsImage } },
+      { title: "Yojana Magazine", path: "/current-affairs/monthly/yojana", icon: { image: newsImage } },
+      { title: "Kurukshetra Magazine", path: "/current-affairs/monthly/kurukshetra", icon: { image: newsImage } },
+      { title: "Science Reporter", path: "/current-affairs/monthly/science-reporter", icon: { image: newsImage } },
     ]
   },
   {
     title: "Yearly Current Affairs",
     items: [
-      { title: "Union Budget", path: "/current-affairs/yearly/union-budget", icon: "💰" },
-      { title: "Economic Survey", path: "/current-affairs/yearly/economic-survey", icon: "📊" },
-      { title: "Year End Review", path: "/current-affairs/yearly/year-end-review", icon: "📅" },
+      { title: "Union Budget", path: "/current-affairs/yearly/union-budget", icon: { image: newsImage } },
+      { title: "Economic Survey", path: "/current-affairs/yearly/economic-survey", icon: { image: newsImage } },
+      { title: "Year End Review", path: "/current-affairs/yearly/year-end-review", icon: { image: newsImage } },
     ]
   }
 ];
@@ -75,7 +78,15 @@ const CurrentAffairsLayout: React.FC<CurrentAffairsLayoutProps> = ({ children, a
                                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                             }`}
                           >
-                            {item.icon && <span className="mr-3">{item.icon}</span>}
+                            {item.icon && (
+                              <span className="mr-3">
+                                {typeof item.icon === 'object' && 'image' in item.icon ? (
+                                  <Image src={item.icon.image} alt={item.title} width={24} height={24} />
+                                ) : (
+                                  item.icon
+                                )}
+                              </span>
+                            )}
                             {item.title}
                           </Link>
                         </li>
@@ -124,4 +135,4 @@ const CurrentAffairsLayout: React.FC<CurrentAffairsLayoutProps> = ({ children, a
   );
 };
 
-export default CurrentAffairsLayout; 
+export default CurrentAffairsLayout;
