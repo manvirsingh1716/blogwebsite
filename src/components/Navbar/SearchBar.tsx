@@ -1,43 +1,44 @@
+"use client";
+
 import { useState } from 'react';
 
 const SearchBar = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>): void => {
-    e.preventDefault();
-    // Implement search functionality
-    console.log('Search query:', searchQuery);
-  };
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <form onSubmit={handleSearch} className="flex items-center">
-      <div className="relative">
+    <div className={`relative flex items-center transition-all duration-300 ${
+      isFocused ? 'w-[320px]' : 'w-[280px]'
+    }`}>
+      <div className={`relative w-full group ${
+        isFocused 
+          ? 'ring-2 ring-blue-400 shadow-lg bg-white' 
+          : 'hover:ring-1 hover:ring-orange-200 bg-orange-50/50 hover:bg-white'
+      } rounded-full transition-all duration-300`}>
         <input
           type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search"
-          className="w-[140px] h-[26px] pl-8 pr-2 text-[12px] border border-gray-200 focus:outline-none focus:border-gray-300 rounded-sm placeholder-gray-500 text-black"
+          placeholder="Search notes, subjects..."
+          className="w-full py-2.5 pl-11 pr-4 text-sm text-gray-700 placeholder-gray-400 
+                    bg-transparent border-none rounded-full outline-none transition-all"
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
         />
-        <button
-          type="submit"
-          className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-        >
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3.5">
           <svg 
-            className="w-3.5 h-3.5" 
-            viewBox="0 0 24 24" 
+            className={`w-5 h-5 transition-colors duration-300 ${
+              isFocused ? 'text-blue-500' : 'text-orange-400'
+            }`}
             fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
             strokeLinecap="round" 
-            strokeLinejoin="round"
+            strokeLinejoin="round" 
+            strokeWidth="2" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
           >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-        </button>
+        </div>
       </div>
-    </form>
+    </div>
   );
 };
 

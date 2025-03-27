@@ -28,30 +28,41 @@ const CurrentAffairsIndex = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 max-w-7xl">
         {/* Main Categories */}
         {navigationSections?.map((section, index) => (
           <div key={index} className="mb-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">{section.title}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex flex-col items-center mb-10">
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">{section.title}</h2>
+              <div className="w-24 h-1 bg-yellow-400 rounded-full"></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {section.items.map((item, itemIndex) => (
                 <Link key={itemIndex} href={item.path} className="group">
-                  <div className="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-center mb-4">
-                      <span className="text-2xl mr-3">
-                        {typeof item.icon === 'object' && item.icon && 'image' in item.icon ? (
-                          <img src={item.icon.image.src} alt={item.title} width={24} height={24} />
-                        ) : (
-                          item.icon
-                        )}
-                      </span>
-                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600">
-                        {item.title}
-                      </h3>
+                  <div className="bg-white rounded-lg shadow-sm p-10 hover:shadow-xl transition-all duration-300 h-[400px] flex flex-col justify-between transform hover:-translate-y-1">
+                    <div>
+                      <div className="flex items-center mb-8">
+                        <span className="text-4xl mr-6 text-yellow-500 group-hover:text-yellow-600 transition-colors">
+                          {typeof item.icon === 'object' && item.icon && 'image' in item.icon ? (
+                            <img src={item.icon.image.src} alt={item.title} width={40} height={40} className="text-yellow-500" />
+                          ) : (
+                            item.icon
+                          )}
+                        </span>
+                        <h3 className="text-2xl font-semibold text-gray-800 group-hover:text-yellow-600 transition-colors">
+                          {item.title}
+                        </h3>
+                      </div>
+                      <p className="text-gray-600 text-lg leading-relaxed">
+                        {getItemDescription(item.title)}
+                      </p>
                     </div>
-                    <p className="text-red-600">
-                      {getItemDescription(item.title)}
-                    </p>
+                    <div className="text-yellow-500 group-hover:text-yellow-600 font-medium flex items-center text-lg transition-colors">
+                      Read More
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </div>
                   </div>
                 </Link>
               ))}
