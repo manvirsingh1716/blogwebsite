@@ -1,15 +1,16 @@
-"use client"
+"use client";
 
-import { useEditor, EditorContent } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
-import Link from "@tiptap/extension-link"
-import Image from "@tiptap/extension-image"
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight"
-import TextAlign from "@tiptap/extension-text-align"
-import Color from "@tiptap/extension-color"
-import TextStyle from "@tiptap/extension-text-style"
-import { Mark, mergeAttributes } from '@tiptap/core'
-import { common, createLowlight } from "lowlight"
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import TextAlign from "@tiptap/extension-text-align";
+import Color from "@tiptap/extension-color";
+import TextStyle from "@tiptap/extension-text-style";
+import { Mark, mergeAttributes } from "@tiptap/core";
+import { common, createLowlight } from "lowlight";
+import Heading from "@tiptap/extension-heading";
 import {
   Bold,
   Italic,
@@ -25,57 +26,63 @@ import {
   AlignRight,
   Undo,
   Redo,
-  Type
-} from "lucide-react"
-import { cn } from "@/lib/utils"
-import React, { useState } from 'react';
+  Type,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import React, { useState } from "react";
 
-const lowlight = createLowlight(common)
+const lowlight = createLowlight(common);
 
 const FontSize = Mark.create({
-  name: 'fontSize',
+  name: "fontSize",
   addAttributes() {
     return {
       size: {
-        default: '16px',
-        parseHTML: element => element.style.fontSize,
-        renderHTML: attributes => {
+        default: "16px",
+        parseHTML: (element) => element.style.fontSize,
+        renderHTML: (attributes) => {
           if (!attributes.size) {
-            return {}
+            return {};
           }
           return {
-            style: `font-size: ${attributes.size}`
-          }
-        }
-      }
-    }
+            style: `font-size: ${attributes.size}`,
+          };
+        },
+      },
+    };
   },
   parseHTML() {
     return [
       {
-        style: 'font-size',
-        getAttrs: value => {
+        style: "font-size",
+        getAttrs: (value) => {
           return {
-            size: value
-          }
-        }
-      }
-    ]
+            size: value,
+          };
+        },
+      },
+    ];
   },
   renderHTML({ HTMLAttributes }) {
-    return ['span', mergeAttributes(HTMLAttributes), 0]
-  }
-})
+    return ["span", mergeAttributes(HTMLAttributes), 0];
+  },
+});
 
 interface ToolbarButtonProps {
-  onClick: () => void
-  icon: React.ReactNode
-  label: string
-  isActive?: boolean
-  disabled?: boolean
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  isActive?: boolean;
+  disabled?: boolean;
 }
 
-const ToolbarButton = ({ onClick, icon, label, isActive, disabled }: ToolbarButtonProps) => {
+const ToolbarButton = ({
+  onClick,
+  icon,
+  label,
+  isActive,
+  disabled,
+}: ToolbarButtonProps) => {
   return (
     <button
       onClick={onClick}
@@ -90,24 +97,24 @@ const ToolbarButton = ({ onClick, icon, label, isActive, disabled }: ToolbarButt
     >
       {icon}
     </button>
-  )
-}
+  );
+};
 
 interface TiptapEditorProps {
-  content: string
-  onChange: (html: string) => void
+  content: string;
+  onChange: (html: string) => void;
 }
 
 const FONT_SIZES = {
-  'Small': '12px',
-  'Normal': '16px',
-  'Large': '20px',
-  'Extra Large': '24px',
-  'Huge': '32px'
-}
+  Small: "12px",
+  Normal: "16px",
+  Large: "20px",
+  "Extra Large": "24px",
+  Huge: "32px",
+};
 
 const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
-  const [currentSize, setCurrentSize] = useState('Normal');
+  const [currentSize, setCurrentSize] = useState("Normal");
   const imageInputRef = React.useRef<HTMLInputElement>(null);
 
   const addImage = () => {
@@ -118,13 +125,17 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
     if (e.target.files?.length) {
       const file = e.target.files[0];
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         if (event.target?.result && editor) {
-          editor.chain().focus().setImage({ src: event.target.result as string }).run();
+          editor
+            .chain()
+            .focus()
+            .setImage({ src: event.target.result as string })
+            .run();
         }
       };
-      
+
       reader.readAsDataURL(file);
     }
   };
@@ -141,55 +152,72 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
           keepAttributes: false,
         },
       }),
+      Heading.configure({
+        levels: [1, 2, 3, 4, 5, 6], // Enable <h1> to <h6>
+      }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-blue-600 hover:underline cursor-pointer',
+          class: "text-blue-600 hover:underline cursor-pointer",
         },
       }),
       Image.configure({
         HTMLAttributes: {
-          class: 'max-w-full rounded-lg my-4',
+          class: "max-w-full rounded-lg my-4",
         },
       }),
       CodeBlockLowlight.configure({
         lowlight,
       }),
       TextAlign.configure({
-        types: ['paragraph'],
-        defaultAlignment: 'left',
+        types: ["paragraph", "heading"], // Allow text alignment for headings
+        defaultAlignment: "left",
       }),
-      Color.configure({ types: ['textStyle'] }),
+      Color.configure({ types: ["textStyle"] }),
       TextStyle,
       FontSize,
     ],
     content,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
+      onChange(editor.getHTML());
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-slate max-w-none focus:outline-none min-h-[300px] p-4 text-gray-900'
-      }
-    }
-  })
+        class:
+          "prose prose-slate max-w-none focus:outline-none min-h-[300px] p-4 text-gray-900",
+      },
+    },
+  });
 
   if (!editor) {
-    return null
+    return null;
   }
 
   const setFontSize = (sizeName: string) => {
     const size = FONT_SIZES[sizeName as keyof typeof FONT_SIZES];
-    editor.chain().focus().unsetMark('fontSize').setMark('fontSize', { size }).run();
+    editor
+      .chain()
+      .focus()
+      .unsetMark("fontSize")
+      .setMark("fontSize", { size })
+      .run();
     setCurrentSize(sizeName);
   };
 
+  const setHeading = (level: number) => {
+    editor
+      .chain()
+      .focus()
+      .toggleHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 })
+      .run();
+  };
+
   const setLink = () => {
-    const url = window.prompt("Enter URL")
+    const url = window.prompt("Enter URL");
     if (url) {
-      editor.chain().focus().setLink({ href: url }).run()
+      editor.chain().focus().setLink({ href: url }).run();
     }
-  }
+  };
 
   return (
     <div className="border rounded-lg bg-white">
@@ -203,20 +231,21 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
 
       {/* Editor Toolbar */}
       <div className="border-b p-2 flex flex-wrap gap-1 bg-gray-50">
-        {/* Font Size Selector */}
+        {/* Heading Selector */}
         <div className="flex items-center gap-1 pr-2 border-r">
           <div className="flex items-center gap-2">
             <Type className="w-4 h-4 text-gray-600" />
             <select
-              onChange={(e) => setFontSize(e.target.value)}
-              value={currentSize}
+              onChange={(e) => setHeading(parseInt(e.target.value))}
               className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white text-gray-900"
             >
-              {Object.keys(FONT_SIZES).map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
+              <option value="0">Normal</option>
+              <option value="1">Heading 1</option>
+              <option value="2">Heading 2</option>
+              <option value="3">Heading 3</option>
+              <option value="4">Heading 4</option>
+              <option value="5">Heading 5</option>
+              <option value="6">Heading 6</option>
             </select>
           </div>
         </div>
@@ -245,13 +274,13 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
         <div className="flex items-center gap-1 px-2 border-r">
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            isActive={editor.isActive('bulletList')}
+            isActive={editor.isActive("bulletList")}
             icon={<List size={18} />}
             label="Bullet List"
           />
           <ToolbarButton
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            isActive={editor.isActive('orderedList')}
+            isActive={editor.isActive("orderedList")}
             icon={<ListOrdered size={18} />}
             label="Ordered List"
           />
@@ -272,10 +301,14 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
         <div className="flex items-center gap-1 px-2 border-r">
           <input
             type="color"
-            onInput={(e: React.FormEvent<HTMLInputElement>) => 
-              editor.chain().focus().setColor((e.target as HTMLInputElement).value).run()
+            onInput={(e: React.FormEvent<HTMLInputElement>) =>
+              editor
+                .chain()
+                .focus()
+                .setColor((e.target as HTMLInputElement).value)
+                .run()
             }
-            value={editor.getAttributes('textStyle').color || '#000000'}
+            value={editor.getAttributes("textStyle").color || "#000000"}
             className="h-8 w-8 cursor-pointer border-0 bg-transparent p-1"
             title="Text Color"
           />
@@ -297,20 +330,20 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
 
         <div className="flex items-center gap-1 px-2 border-r">
           <ToolbarButton
-            onClick={() => editor.commands.setTextAlign('left')}
-            isActive={editor.isActive({ textAlign: 'left' })}
+            onClick={() => editor.commands.setTextAlign("left")}
+            isActive={editor.isActive({ textAlign: "left" })}
             icon={<AlignLeft size={18} />}
             label="Align Left"
           />
           <ToolbarButton
-            onClick={() => editor.commands.setTextAlign('center')}
-            isActive={editor.isActive({ textAlign: 'center' })}
+            onClick={() => editor.commands.setTextAlign("center")}
+            isActive={editor.isActive({ textAlign: "center" })}
             icon={<AlignCenter size={18} />}
             label="Align Center"
           />
           <ToolbarButton
-            onClick={() => editor.commands.setTextAlign('right')}
-            isActive={editor.isActive({ textAlign: 'right' })}
+            onClick={() => editor.commands.setTextAlign("right")}
+            isActive={editor.isActive({ textAlign: "right" })}
             icon={<AlignRight size={18} />}
             label="Align Right"
           />
@@ -333,12 +366,12 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
       </div>
 
       {/* Editor Content */}
-      <EditorContent 
-        editor={editor} 
-        className="prose prose-slate max-w-none focus:outline-none min-h-[300px] p-4 text-gray-900" 
+      <EditorContent
+        editor={editor}
+        className="prose prose-slate max-w-none focus:outline-none min-h-[300px] p-4 text-gray-900"
       />
     </div>
-  )
-}
+  );
+};
 
-export default TiptapEditor
+export default TiptapEditor;

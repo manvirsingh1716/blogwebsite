@@ -2,3 +2,39 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+.prose h1 {
+    font-size: 2.25rem;
+    /* Example: 36px */
+    margin-bottom: 1rem;
+}
+
+.prose h2 {
+    font-size: 1.875rem;
+    /* Example: 30px */
+    margin-bottom: 0.75rem;
+}
+
+.prose h3 {
+    font-size: 1.5rem;
+    /* Example: 24px */
+    margin-bottom: 0.5rem;
+}
+
+.prose h4 {
+    font-size: 1.25rem;
+    /* Example: 20px */
+    margin-bottom: 0.5rem;
+}
+
+.prose h5 {
+    font-size: 1.125rem;
+    /* Example: 18px */
+    margin-bottom: 0.5rem;
+}
+
+.prose h6 {
+    font-size: 1rem;
+    /* Example: 16px */
+    margin-bottom: 0.5rem;
+}

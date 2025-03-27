@@ -9,7 +9,7 @@ interface TOCItem {
 }
 
 interface TableOfContentsProps {
-  content?: string;
+  content?: string; // Raw HTML content passed from the parent
 }
 
 export const TableOfContents: React.FC<TableOfContentsProps> = ({
@@ -19,18 +19,23 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
-    // Get all headings from the article
-    const elements = Array.from(document.querySelectorAll("h1, h2, h3, h4"))
-      .filter((element) => element.id) // Only get elements with IDs
-      .map((element) => ({
-        id: element.id,
-        text: element.textContent || "",
-        level: parseInt(element.tagName.charAt(1)),
-      }));
+    if (!content) return;
+    console.log("Content", content);
+
+    // Parse the HTML content to extract headings
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, "text/html");
+    const elements = Array.from(
+      doc.querySelectorAll("h1, h2, h3, h4, h5, h6")
+    ).map((element, index) => ({
+      id: element.id || `heading-${index}`, // Generate a unique ID if missing
+      text: element.textContent || "",
+      level: parseInt(element.tagName.charAt(1)), // Extract heading level (e.g., 1 for h1)
+    }));
 
     setHeadings(elements);
 
-    // Set up intersection observer
+    // Set up intersection observer for active heading tracking
     const callback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
@@ -51,14 +56,13 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [content]);
 
   if (headings.length === 0) return null;
 
   return (
     <Card>
       <CardContent className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Table of Contents</h3>
         <nav className="space-y-2">
           {headings.map((heading) => (
             <a
