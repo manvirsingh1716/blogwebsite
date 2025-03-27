@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import logo from '../../../public/next.svg'
+import logo from '../../../public/logo.png'
 import SearchBar from "./SearchBar";
 import { NavItem } from "@/types/navigation";
 

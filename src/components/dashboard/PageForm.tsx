@@ -404,19 +404,19 @@ export function PageForm({ editPage = null }: PageFormProps) {
       case 1:
         return (
           <div className="space-y-6">
-            <div className="bg-white border border-blue-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-gray-600 mb-4">Select Page Location</h3>
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Select Page Location</h3>
               <div className="space-y-4">
                 {Array.from({ length: getCurrentLevel() + 1 }).map((_, level) => (
                   <div key={level}>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
                       Level {level + 1} {level >= 4 && "(Not shown in navbar)"}
                     </label>
                     <Select
                       value={selectedLevels[level]}
                       onValueChange={(value) => handleLevelChange(level, value)}
                     >
-                      <SelectTrigger className="w-full border-blue-100 focus:border-blue-300 focus:ring-blue-300">
+                      <SelectTrigger className="w-full border-slate-200 focus:border-slate-400 focus:ring-slate-400">
                         <SelectValue placeholder={level === 0 ? "Select root page" : `Select level ${level + 1} page`} />
                       </SelectTrigger>
                       <SelectContent>
@@ -436,7 +436,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
               <div className="mt-6 flex justify-end">
                 <Button
                   onClick={() => setStep(2)}
-                  className="bg-gradient-to-r from-blue-400 to-blue-300 text-white px-8 py-2 rounded-lg hover:from-blue-500 hover:to-blue-400 transition-colors duration-200"
+                  className="bg-slate-800 text-white px-8 py-2 rounded-lg hover:bg-slate-700 transition-colors duration-200"
                 >
                   Next: Select Template
                 </Button>
@@ -448,16 +448,15 @@ export function PageForm({ editPage = null }: PageFormProps) {
       case 2:
         return (
           <div className="space-y-6">
-            <div className="bg-white border border-blue-50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-gray-600 mb-4">Select Template</h3>
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Select Template</h3>
               <Select
                 value={selectedTemplate || '_none'}
                 onValueChange={(value) => {
-                  console.log('Selected template:', value);
                   setSelectedTemplate(value === '_none' ? '' : value);
                 }}
               >
-                <SelectTrigger className="w-full border-blue-100 focus:border-blue-300 focus:ring-blue-300">
+                <SelectTrigger className="w-full border-slate-200 focus:border-slate-400 focus:ring-slate-400">
                   <SelectValue placeholder="Choose a template" />
                 </SelectTrigger>
                 <SelectContent>
@@ -473,14 +472,14 @@ export function PageForm({ editPage = null }: PageFormProps) {
                 <Button
                   onClick={() => setStep(1)}
                   variant="outline"
-                  className="border-blue-100 text-blue-400 hover:bg-blue-50/50"
+                  className="border-slate-200 text-slate-700 hover:bg-slate-50"
                 >
                   Back to Path Selection
                 </Button>
                 <Button
                   onClick={() => setStep(3)}
                   disabled={!selectedTemplate}
-                  className="bg-gradient-to-r from-blue-400 to-blue-300 text-white px-8 py-2 rounded-lg hover:from-blue-500 hover:to-blue-400 transition-colors duration-200"
+                  className="bg-slate-800 text-white px-8 py-2 rounded-lg hover:bg-slate-700 transition-colors duration-200"
                 >
                   Next: Fill Form
                 </Button>
@@ -492,13 +491,13 @@ export function PageForm({ editPage = null }: PageFormProps) {
       case 3:
         return (
           <div className="space-y-6">
-            <div className="bg-white border border-blue-50 rounded-xl p-6">
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-600">Fill Page Details</h3>
+                <h3 className="text-lg font-semibold text-slate-900">Fill Page Details</h3>
                 <Button
                   onClick={() => setStep(2)}
                   variant="outline"
-                  className="border-blue-100 text-blue-400 hover:bg-blue-50/50"
+                  className="border-slate-200 text-slate-700 hover:bg-slate-50"
                 >
                   Back to Template Selection
                 </Button>
@@ -512,7 +511,6 @@ export function PageForm({ editPage = null }: PageFormProps) {
 
   return (
     <div className="space-y-6">
-      {/* Progress Steps */}
       <div className="flex items-center justify-between mb-8">
         {[
           { number: 1, title: 'Select Path' },
@@ -523,34 +521,32 @@ export function PageForm({ editPage = null }: PageFormProps) {
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center ${
                 step >= s.number
-                  ? 'bg-blue-400 text-white'
-                  : 'bg-gray-100 text-gray-500'
+                  ? 'bg-slate-800 text-white'
+                  : 'bg-slate-100 text-slate-500'
               }`}
             >
               {s.number}
             </div>
             <span
               className={`ml-2 ${
-                step >= s.number ? 'text-gray-700' : 'text-gray-400'
+                step >= s.number ? 'text-slate-900' : 'text-slate-400'
               }`}
             >
               {s.title}
             </span>
             {s.number < 3 && (
-              <div className="w-24 h-px mx-4 bg-gray-200" />
+              <div className="w-24 h-px mx-4 bg-slate-200" />
             )}
           </div>
         ))}
       </div>
 
-      {/* Error Display */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600">
           {error}
         </div>
       )}
 
-      {/* Step Content */}
       {renderStepContent()}
     </div>
   );
