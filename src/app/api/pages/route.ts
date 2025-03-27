@@ -91,14 +91,160 @@ class PageService {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const pages = await prisma.page.findMany({
-      include: pageInclude
-    });
-    return NextResponse.json(pages);
+    const { searchParams } = new URL(request.url);
+    const basePath = searchParams.get('basePath') || '';
+    
+    console.log('Fetching pages with basePath:', basePath);
+    
+    // Try to fetch from backend first
+    try {
+      const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:5000/api/v1';
+      const apiUrl = `${backendUrl}/page`;
+      
+      console.log('Fetching pages from backend:', apiUrl);
+      
+      const response = await fetch(apiUrl, { 
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        // Set a reasonable timeout to avoid hanging
+        signal: AbortSignal.timeout(5000)
+      });
+      
+      if (response.ok) {
+        const responseData = await response.json();
+        const pages = responseData.data || [];
+        
+        console.log(`Found ${pages.length} pages from backend`);
+        
+        if (pages.length > 0) {
+          // Process pages as before
+          pages.forEach((page: any) => {
+            console.log(`Page: ${page.title}, Slug: ${page.slug}, Level: ${page.level}, ParentID: ${page.parentId || 'null'}`);
+          });
+          
+          // If basePath is empty, return all pages without filtering
+          let filteredPages = pages;
+          
+          if (basePath && basePath !== '') {
+            // Filter logic remains the same
+            const normalizedBasePath = basePath.startsWith('/') ? basePath.substring(1) : basePath;
+            
+            filteredPages = pages.filter((page: any) => {
+              const normalizedPageSlug = page.slug.startsWith('/') ? page.slug.substring(1) : page.slug;
+              
+              return (
+                normalizedPageSlug === normalizedBasePath ||
+                normalizedPageSlug.startsWith(normalizedBasePath + '/') ||
+                normalizedBasePath.startsWith(normalizedPageSlug + '/') ||
+                (normalizedPageSlug.indexOf('/') === -1 && normalizedBasePath.startsWith(normalizedPageSlug))
+              );
+            });
+          }
+          
+          console.log(`Filtered to ${filteredPages.length} pages for basePath: ${basePath}`);
+          
+          // Transform the data to match the expected format for the sidebar
+          const transformedPages = filteredPages.map((page: any) => ({
+            id: page.id.toString(),
+            title: page.title,
+            slug: page.slug,
+            level: page.level,
+            parentId: page.parentId ? page.parentId.toString() : null
+          }));
+          
+          return NextResponse.json(transformedPages);
+        }
+      }
+      
+      // If we get here, either the response wasn't OK or we got 0 pages
+      console.log('Backend API failed or returned 0 pages, falling back to direct database access');
+    } catch (backendError) {
+      console.error('Error fetching from backend:', backendError);
+      console.log('Falling back to direct database access');
+    }
+    
+    // Fallback to direct database access
+    try {
+      // Get all pages with their relationships
+      const pages = await prisma.page.findMany({
+        include: {
+          parent: {
+            select: {
+              id: true,
+              title: true,
+              level: true
+            }
+          },
+          children: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              level: true,
+              parentId: true
+            }
+          }
+        },
+        orderBy: {
+          title: 'asc'
+        }
+      });
+      
+      console.log(`Found ${pages.length} pages from database`);
+      
+      if (pages.length === 0) {
+        // Return empty array if no pages found
+        return NextResponse.json([]);
+      }
+      
+      pages.forEach((page: any) => {
+        console.log(`Page: ${page.title}, Slug: ${page.slug}, Level: ${page.level}, ParentID: ${page.parentId || 'null'}`);
+      });
+      
+      // If basePath is empty, return all pages without filtering
+      let filteredPages = pages;
+      
+      if (basePath && basePath !== '') {
+        // Remove leading slash if present for consistent comparison
+        const normalizedBasePath = basePath.startsWith('/') ? basePath.substring(1) : basePath;
+        
+        filteredPages = pages.filter((page: any) => {
+          const normalizedPageSlug = page.slug.startsWith('/') ? page.slug.substring(1) : page.slug;
+          
+          return (
+            // The page is the basePath itself
+            normalizedPageSlug === normalizedBasePath ||
+            // The page is under the basePath
+            normalizedPageSlug.startsWith(normalizedBasePath + '/') ||
+            // The basePath is under this page (this page is a parent)
+            normalizedBasePath.startsWith(normalizedPageSlug + '/') ||
+            // Special case for root pages when basePath doesn't have a slash
+            (normalizedPageSlug.indexOf('/') === -1 && normalizedBasePath.startsWith(normalizedPageSlug))
+          );
+        });
+      }
+      
+      console.log(`Filtered to ${filteredPages.length} pages for basePath: ${basePath}`);
+      
+      // Transform the data to match the expected format for the sidebar
+      const transformedPages = filteredPages.map((page: any) => ({
+        id: page.id.toString(),
+        title: page.title,
+        slug: page.slug,
+        level: page.level,
+        parentId: page.parentId ? page.parentId.toString() : null
+      }));
+      
+      return NextResponse.json(transformedPages);
+    } catch (dbError) {
+      console.error('Error accessing database directly:', dbError);
+      // Return empty array if both methods fail
+      return NextResponse.json([]);
+    }
   } catch (error) {
-    console.error('Error fetching pages:', error);
+    console.error('Error in API route:', error);
     return NextResponse.json(
       { error: 'Failed to fetch pages' },
       { status: 500 }

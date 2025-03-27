@@ -40,7 +40,9 @@ async function getPage(
 }
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const page = await getPage(params.slug);
+  // Ensure params is properly awaited by using it in an async context
+  const slug = params.slug;
+  const page = await getPage(slug);
 
   if (!page) {
     notFound();

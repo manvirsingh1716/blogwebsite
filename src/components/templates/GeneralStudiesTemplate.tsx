@@ -15,10 +15,27 @@ interface GeneralStudiesContent {
 
 export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
   const { title, id } = page;
-  const content = (page.content || {}) as unknown as GeneralStudiesContent;
+  
+  // Parse the content properly based on the format it's stored in
+  let parsedContent: GeneralStudiesContent;
+  try {
+    // Try to parse as JSON if it's a string
+    if (typeof page.content === 'string') {
+      parsedContent = JSON.parse(page.content);
+    } else {
+      // If it's already an object, use it directly
+      parsedContent = page.content as unknown as GeneralStudiesContent;
+    }
+  } catch (error) {
+    console.error('Error parsing content:', error);
+    // Fallback to empty content
+    parsedContent = { title: title, content: '', image: undefined };
+  }
   
   // Default image if none is provided
-  const pageImage = content.image || '/images/default-general-studies.jpg';
+  const pageImage = parsedContent.image || '/images/default-general-studies.jpg';
+  
+  console.log('Parsed content:', parsedContent);
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -50,7 +67,19 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Related Topics</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {page.children.map((child: any) => {
-                    const childContent = child.content || {};
+                    let childContent;
+                    try {
+                      // Try to parse child content if it's a string
+                      if (typeof child.content === 'string') {
+                        childContent = JSON.parse(child.content);
+                      } else {
+                        childContent = child.content || {};
+                      }
+                    } catch (error) {
+                      console.error('Error parsing child content:', error);
+                      childContent = {};
+                    }
+                    
                     const childImage = childContent.image || '/images/default-subtopic.jpg';
                     
                     return (
@@ -93,8 +122,9 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
                 <CardContent className="p-6">
                   <h2 className="text-xl font-bold mb-4 text-gray-900">Navigation</h2>
                   <SidebarNavigation 
-                    currentPageId={id}
-                    basePath="/upsc"
+                    currentPageId={id.toString()}
+                    basePath={page.slug.split('/')[0]}
+                    hideParent={true}
                   />
                 </CardContent>
               </Card>
@@ -108,7 +138,7 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
             <CardContent className="p-8">
               <div 
                 className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600"
-                dangerouslySetInnerHTML={{ __html: content.content || '' }} 
+                dangerouslySetInnerHTML={{ __html: parsedContent.content || '' }} 
               />
             </CardContent>
           </Card>

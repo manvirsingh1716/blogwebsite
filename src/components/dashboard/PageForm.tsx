@@ -107,6 +107,11 @@ export function PageForm({ editPage = null }: PageFormProps) {
       });
       if (!response.ok) throw new Error('Failed to fetch pages');
       const { data } = await response.json();
+      
+      // Debug: Log the pages data to see level information
+      console.log('Pages from API:', data);
+      console.log('Pages with level > 1:', data.filter((page: PageWithRelations) => page.level > 1));
+      
       setPages(data);
     } catch (error) {
       console.error('Error fetching pages:', error);
@@ -204,10 +209,19 @@ export function PageForm({ editPage = null }: PageFormProps) {
   };
 
   const getPagesForLevel = (level: number): PageWithRelations[] => {
-    if (level === 0) return pages.filter(page => !page.parent);
+    // For level 0, return only root pages (no parent)
+    if (level === 0) {
+      return pages.filter(page => !page.parent);
+    }
+    
     const parentId = selectedLevels[level - 1];
     if (!parentId) return [];
-    return pages.filter(page => page.parent?.id === parentId);
+    
+    // Filter by both parent ID and level to prevent duplicate levels
+    return pages.filter(page => 
+      page.parent?.id === parentId && 
+      page.level === level + 1
+    );
   };
 
   const getCurrentLevel = (): number => {
@@ -236,7 +250,16 @@ export function PageForm({ editPage = null }: PageFormProps) {
       // Generate the full path for the slug
       const fullPath = selectedLevels
         .filter((level) => level)
-        .map((level) => pages.find((page) => page.id === level)?.slug)
+        .map((level) => {
+          // Get the page for this level
+          const page = pages.find((p) => p.id === level);
+          if (!page) return '';
+          
+          // Extract just the last segment of the slug, not the full path
+          // This prevents duplication of parent paths
+          const slugParts = page.slug.split('/');
+          return slugParts[slugParts.length - 1];
+        })
         .concat(
           (formData.title || formData.hero?.title || "")
             .toString()
@@ -245,6 +268,10 @@ export function PageForm({ editPage = null }: PageFormProps) {
             .replace(/[^a-z0-9-]/g, "")
         )
         .join("/");
+
+      // Calculate the correct level based on the path depth
+      // This ensures the level in the database matches the actual path depth
+      const pathLevel = selectedLevels.filter(Boolean).length + 1;
 
       // Create the page data based on template type
       const pageData = {
@@ -257,7 +284,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
           lastUpdated: new Date().toISOString(),
           teamSize: 0,
         },
-        level: getCurrentLevel(),
+        level: pathLevel, // Use the path depth as the level
         showInNav: true,
         order: 0,
       };

@@ -16,11 +16,13 @@ interface PageItem {
 interface SidebarNavigationProps {
   currentPageId?: string;
   basePath?: string;
+  hideParent?: boolean;
 }
 
 export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ 
   currentPageId,
-  basePath = '/upsc'
+  basePath = '',
+  hideParent = false
 }) => {
   const [pages, setPages] = useState<PageItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,59 +33,146 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   useEffect(() => {
     const fetchPages = async () => {
       try {
-        // In a real implementation, this would be an API call
-        const response = await fetch(`/api/pages?basePath=${basePath}`);
+        setLoading(true);
+        
+        // Normalize basePath to handle different formats
+        const normalizedBasePath = basePath.startsWith('/') ? basePath.substring(1) : basePath;
+        console.log(`Fetching pages for normalized base path: ${normalizedBasePath}`);
+        
+        // Use Next.js API route directly
+        const response = await fetch(`/api/pages?basePath=${normalizedBasePath}`);
         if (!response.ok) {
           throw new Error('Failed to fetch pages');
         }
         const data = await response.json();
         
-        // Transform flat list into hierarchical structure
-        const pagesWithChildren = buildPageHierarchy(data);
-        setPages(pagesWithChildren);
+        console.log(`Fetched ${data.length} pages for basePath: ${normalizedBasePath}`);
+        console.log('Page data:', data);
         
-        // Auto-expand the current page's path
-        if (currentPageId) {
-          autoExpandCurrentPath(data, currentPageId);
+        // If no pages were returned, try without basePath filtering
+        if (data.length === 0 && normalizedBasePath) {
+          console.log('No pages found with basePath filter, trying without filter');
+          const allPagesResponse = await fetch('/api/pages');
+          if (allPagesResponse.ok) {
+            const allData = await allPagesResponse.json();
+            console.log(`Fetched ${allData.length} pages without filter`);
+            console.log('All pages data:', allData);
+            
+            if (allData.length > 0) {
+              // Transform flat list into hierarchical structure
+              const pagesWithChildren = buildPageHierarchy(allData);
+              console.log('Hierarchical pages built successfully');
+              setPages(pagesWithChildren);
+              
+              // Auto-expand the current page's path
+              if (currentPageId) {
+                autoExpandCurrentPath(allData, currentPageId);
+              }
+              
+              setLoading(false);
+              return;
+            }
+          }
         }
-      } catch (err) {
-        console.error('Error fetching pages:', err);
-        setError('Failed to load navigation');
         
-        // For development, use mock data
-        const mockData = generateMockPages();
-        const pagesWithChildren = buildPageHierarchy(mockData);
-        setPages(pagesWithChildren);
-      } finally {
+        if (data.length > 0) {
+          // Transform flat list into hierarchical structure
+          const pagesWithChildren = buildPageHierarchy(data);
+          console.log('Hierarchical pages built successfully');
+          setPages(pagesWithChildren);
+          
+          // Auto-expand the current page's path
+          if (currentPageId) {
+            autoExpandCurrentPath(data, currentPageId);
+          }
+        } else {
+          // No pages found, just set empty array
+          console.log('No pages found');
+          setPages([]);
+        }
+        
         setLoading(false);
+      } catch (error) {
+        console.error('Error fetching pages:', error);
+        setError('Failed to load navigation');
+        setLoading(false);
+        setPages([]);
       }
     };
 
     fetchPages();
   }, [basePath, currentPageId]);
 
-  const buildPageHierarchy = (flatPages: PageItem[]): PageItem[] => {
-    const pagesMap: Record<string, PageItem> = {};
-    const rootPages: PageItem[] = [];
-
-    // First pass: create map of all pages
-    flatPages.forEach(page => {
-      pagesMap[page.id] = { ...page, children: [] };
+  const buildPageHierarchy = (pages: PageItem[]): PageItem[] => {
+    // Create a map of pages by ID for quick lookup
+    const pagesById = new Map<string, PageItem>();
+    pages.forEach(page => {
+      pagesById.set(page.id, { ...page, children: [] });
     });
-
-    // Second pass: build hierarchy
-    flatPages.forEach(page => {
-      if (page.parentId && pagesMap[page.parentId]) {
-        if (!pagesMap[page.parentId].children) {
-          pagesMap[page.parentId].children = [];
+    
+    // Create a map to track pages by slug for slug-based relationships
+    const pagesBySlug = new Map<string, PageItem>();
+    pages.forEach(page => {
+      pagesBySlug.set(page.slug, pagesById.get(page.id) || { ...page, children: [] });
+    });
+    
+    // First pass: build hierarchy based on parentId
+    const rootPages: PageItem[] = [];
+    
+    pages.forEach(page => {
+      const pageWithChildren = pagesById.get(page.id);
+      if (!pageWithChildren) return;
+      
+      if (page.parentId) {
+        // If page has a parentId, add it as a child of that parent
+        const parent = pagesById.get(page.parentId);
+        if (parent) {
+          parent.children = parent.children || [];
+          parent.children.push(pageWithChildren);
+        } else {
+          // If parent not found by ID, add to root
+          rootPages.push(pageWithChildren);
         }
-        pagesMap[page.parentId].children!.push(pagesMap[page.id]);
       } else {
-        rootPages.push(pagesMap[page.id]);
+        // If no parentId, it's a root page
+        rootPages.push(pageWithChildren);
       }
     });
-
-    return rootPages;
+    
+    // Second pass: check for slug-based relationships for pages without proper parentId
+    pages.forEach(page => {
+      // Skip pages that already have a parent
+      if (page.parentId && pagesById.has(page.parentId)) return;
+      
+      const pageWithChildren = pagesById.get(page.id);
+      if (!pageWithChildren) return;
+      
+      // If page is already in rootPages from first pass, skip
+      if (rootPages.some(p => p.id === page.id)) return;
+      
+      // Check if this page's slug indicates a parent-child relationship
+      const slugParts = page.slug.split('/');
+      if (slugParts.length > 1) {
+        // Try to find a parent based on the slug prefix
+        const parentSlug = slugParts.slice(0, -1).join('/');
+        const potentialParent = pagesBySlug.get(parentSlug);
+        
+        if (potentialParent) {
+          potentialParent.children = potentialParent.children || [];
+          potentialParent.children.push(pageWithChildren);
+          console.log(`Added ${page.title} as child of ${potentialParent.title} based on slug pattern`);
+        } else {
+          // If no parent found by slug, add to root
+          rootPages.push(pageWithChildren);
+        }
+      } else if (!rootPages.some(p => p.id === page.id)) {
+        // If it's a single-segment slug and not already in rootPages, add it
+        rootPages.push(pageWithChildren);
+      }
+    });
+    
+    // Sort pages by title
+    return rootPages.sort((a, b) => a.title.localeCompare(b.title));
   };
 
   const autoExpandCurrentPath = (flatPages: PageItem[], currentId: string) => {
@@ -112,25 +201,10 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
     }));
   };
 
-  const generateMockPages = (): PageItem[] => {
-    return [
-      { id: '1', title: 'UPSC Overview', slug: 'overview', level: 1, parentId: null },
-      { id: '2', title: 'Prelims', slug: 'prelims', level: 1, parentId: null },
-      { id: '3', title: 'General Studies', slug: 'prelims/general-studies', level: 2, parentId: '2' },
-      { id: '4', title: 'CSAT', slug: 'prelims/csat', level: 2, parentId: '2' },
-      { id: '5', title: 'Mains', slug: 'mains', level: 1, parentId: null },
-      { id: '6', title: 'GS Paper 1', slug: 'mains/gs-paper-1', level: 2, parentId: '5' },
-      { id: '7', title: 'History', slug: 'mains/gs-paper-1/history', level: 3, parentId: '6' },
-      { id: '8', title: 'Geography', slug: 'mains/gs-paper-1/geography', level: 3, parentId: '6' },
-      { id: '9', title: 'GS Paper 2', slug: 'mains/gs-paper-2', level: 2, parentId: '5' },
-      { id: '10', title: 'Interview', slug: 'interview', level: 1, parentId: null },
-    ];
-  };
-
   const renderPageItem = (page: PageItem, depth: number = 0) => {
     const hasChildren = page.children && page.children.length > 0;
     const isExpanded = expandedItems[page.id] || false;
-    const isActive = pathname === `${basePath}/${page.slug}` || currentPageId === page.id;
+    const isActive = pathname === `/${page.slug}` || currentPageId === page.id;
     
     return (
       <div key={page.id} className="w-full">
@@ -148,7 +222,7 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           {!hasChildren && <div className="w-6"></div>}
           
           <Link 
-            href={`${basePath}/${page.slug}`}
+            href={`/${page.slug}`}
             className={`py-1.5 px-2 text-sm rounded-md flex-grow transition-colors ${
               isActive 
                 ? 'bg-blue-50 text-blue-600 font-medium' 
@@ -180,7 +254,25 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
   return (
     <nav className="space-y-1 w-full">
       {pages.length > 0 ? (
-        pages.map(page => renderPageItem(page))
+        pages.map(page => {
+          // Skip rendering the parent page if hideParent is true and we're on a child page
+          if (hideParent && pathname) {
+            // Get the current page slug from the pathname
+            const currentPageSlug = pathname.substring(1); // Remove leading slash
+            
+            // If this is the parent page of the current page, only render its children
+            if (currentPageSlug.startsWith(page.slug + '/')) {
+              // Only render this page's children
+              return page.children?.map((child, index) => (
+                <React.Fragment key={child.id || index}>
+                  {renderPageItem(child)}
+                </React.Fragment>
+              )) || null;
+            }
+          }
+          
+          return renderPageItem(page);
+        })
       ) : (
         <div className="py-4 text-center text-gray-500">No pages available</div>
       )}

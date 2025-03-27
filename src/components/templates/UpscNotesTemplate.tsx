@@ -20,6 +20,7 @@ interface UpscNotesTemplateProps {
     id: string;
     title: string;
     content: string;
+    slug: string;
     metadata: Record<string, any>;
     template: {
       id: string;
@@ -69,7 +70,12 @@ export const UpscNotesTemplate: React.FC<UpscNotesTemplateProps> = ({
                   <h2 className="text-xl font-bold mb-4 text-gray-800">
                     Navigation
                   </h2>
-                  <SidebarNavigation currentPageId={page.template.id} basePath="/upsc" />
+                  {/* Debug information is logged in useEffect */}
+                  <SidebarNavigation 
+                    currentPageId={page.id.toString()} 
+                    basePath={page.slug.split('/')[0]} // Use the first segment of the page slug
+                    hideParent={true}
+                  />
                 </CardContent>
               </Card>
 
