@@ -130,26 +130,11 @@ export function PageForm({ editPage = null }: PageFormProps) {
       if (!data || data.length === 0) {
         // Default templates if none exist in DB
         const defaultTemplates = [
-          {
-            id: 'current-affairs',
-            name: 'Current Affairs',
-            description: 'Template for current affairs articles',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
+          
           {
             id: 'article',
             name: 'Article',
             description: 'Template for general articles',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-          {
-            id: 'study-material',
-            name: 'Study Material',
-            description: 'Template for study materials',
             layout: {},
             createdAt: new Date(),
             updatedAt: new Date()
@@ -166,22 +151,6 @@ export function PageForm({ editPage = null }: PageFormProps) {
             id: 'upsc-notes',
             name: 'UPSC Notes',
             description: 'Template for UPSC preparation notes',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-          {
-            id: 'blog',
-            name: 'Blog',
-            description: 'Template for blog posts',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-          {
-            id: 'about',
-            name: 'About Page',
-            description: 'Template for about pages',
             layout: {},
             createdAt: new Date(),
             updatedAt: new Date()
