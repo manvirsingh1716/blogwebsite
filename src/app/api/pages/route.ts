@@ -1,16 +1,6 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/db';
-import { Prisma, Page, Template } from '@prisma/client';
+// import prisma from '@/lib/db';
 import { ValidationService } from '@/lib/validation';
-
-type PageWithTemplate = Page & {
-  template: Template;
-};
-
-type PageWithRelations = PageWithTemplate & {
-  parent?: PageWithRelations;
-  children: PageWithTemplate[];
-};
 
 type PagePathInfo = {
   slug: string;
@@ -93,6 +83,7 @@ class PageService {
 
 export async function GET(request: Request) {
   try {
+    console.log("Inside get request")
     const { searchParams } = new URL(request.url);
     const basePath = searchParams.get('basePath') || '';
     
@@ -101,7 +92,7 @@ export async function GET(request: Request) {
     // Try to fetch from backend first
     try {
       const backendUrl = process.env.BACKEND_API_URL || 'http://localhost:5000/api/v1';
-      const apiUrl = `${backendUrl}/page`;
+      const apiUrl = `${backendUrl}/page/order`;
       
       console.log('Fetching pages from backend:', apiUrl);
       
@@ -165,88 +156,88 @@ export async function GET(request: Request) {
       console.log('Falling back to direct database access');
     }
     
-    // Fallback to direct database access
-    try {
-      // Get all pages with their relationships
-      const pages = await prisma.page.findMany({
-        include: {
-          parent: {
-            select: {
-              id: true,
-              title: true,
-              level: true
-            }
-          },
-          children: {
-            select: {
-              id: true,
-              title: true,
-              slug: true,
-              level: true,
-              parentId: true
-            }
-          }
-        },
-        orderBy: {
-          title: 'asc'
-        }
-      });
+    // // Fallback to direct database access
+    // try {
+    //   // Get all pages with their relationships
+    //   const pages = await prisma.page.findMany({
+    //     include: {
+    //       parent: {
+    //         select: {
+    //           id: true,
+    //           title: true,
+    //           level: true
+    //         }
+    //       },
+    //       children: {
+    //         select: {
+    //           id: true,
+    //           title: true,
+    //           slug: true,
+    //           level: true,
+    //           parentId: true
+    //         }
+    //       }
+    //     },
+    //     orderBy: {
+    //       title: 'asc'
+    //     }
+    //   });
       
-      console.log(`Found ${pages.length} pages from database`);
+    //   console.log(`Found ${pages.length} pages from database`);
       
-      if (pages.length === 0) {
-        // Return empty array if no pages found
-        return NextResponse.json([]);
-      }
+    //   if (pages.length === 0) {
+    //     // Return empty array if no pages found
+    //     return NextResponse.json([]);
+    //   }
       
-      pages.forEach((page: any) => {
-        console.log(`Page: ${page.title}, Slug: ${page.slug}, Level: ${page.level}, ParentID: ${page.parentId || 'null'}`);
-      });
+    //   pages.forEach((page: any) => {
+    //     console.log(`Page: ${page.title}, Slug: ${page.slug}, Level: ${page.level}, ParentID: ${page.parentId || 'null'}`);
+    //   });
       
-      // If basePath is empty, return all pages without filtering
-      let filteredPages = pages;
+    //   // If basePath is empty, return all pages without filtering
+    //   let filteredPages = pages;
       
-      if (basePath && basePath !== '') {
-        // Remove leading slash if present for consistent comparison
-        const normalizedBasePath = basePath.startsWith('/') ? basePath.substring(1) : basePath;
+    //   if (basePath && basePath !== '') {
+    //     // Remove leading slash if present for consistent comparison
+    //     const normalizedBasePath = basePath.startsWith('/') ? basePath.substring(1) : basePath;
         
-        filteredPages = pages.filter((page: any) => {
-          const normalizedPageSlug = page.slug.startsWith('/') ? page.slug.substring(1) : page.slug;
+    //     filteredPages = pages.filter((page: any) => {
+    //       const normalizedPageSlug = page.slug.startsWith('/') ? page.slug.substring(1) : page.slug;
           
-          return (
-            // The page is the basePath itself
-            normalizedPageSlug === normalizedBasePath ||
-            // The page is under the basePath
-            normalizedPageSlug.startsWith(normalizedBasePath + '/') ||
-            // The basePath is under this page (this page is a parent)
-            normalizedBasePath.startsWith(normalizedPageSlug + '/') ||
-            // Special case for root pages when basePath doesn't have a slash
-            (normalizedPageSlug.indexOf('/') === -1 && normalizedBasePath.startsWith(normalizedPageSlug))
-          );
-        });
-      }
+    //       return (
+    //         // The page is the basePath itself
+    //         normalizedPageSlug === normalizedBasePath ||
+    //         // The page is under the basePath
+    //         normalizedPageSlug.startsWith(normalizedBasePath + '/') ||
+    //         // The basePath is under this page (this page is a parent)
+    //         normalizedBasePath.startsWith(normalizedPageSlug + '/') ||
+    //         // Special case for root pages when basePath doesn't have a slash
+    //         (normalizedPageSlug.indexOf('/') === -1 && normalizedBasePath.startsWith(normalizedPageSlug))
+    //       );
+    //     });
+    //   }
       
-      console.log(`Filtered to ${filteredPages.length} pages for basePath: ${basePath}`);
+    //   console.log(`Filtered to ${filteredPages.length} pages for basePath: ${basePath}`);
       
-      // Transform the data to match the expected format for the sidebar
-      const transformedPages = filteredPages.map((page: any) => ({
-        id: page.id.toString(),
-        title: page.title,
-        slug: page.slug,
-        level: page.level,
-        parentId: page.parentId ? page.parentId.toString() : null
-      }));
+    //   // Transform the data to match the expected format for the sidebar
+    //   const transformedPages = filteredPages.map((page: any) => ({
+    //     id: page.id.toString(),
+    //     title: page.title,
+    //     slug: page.slug,
+    //     level: page.level,
+    //     parentId: page.parentId ? page.parentId.toString() : null
+    //   }));
       
-      return NextResponse.json(transformedPages);
-    } catch (dbError) {
-      console.error('Error accessing database directly:', dbError);
-      // Return empty array if both methods fail
-      return NextResponse.json([]);
-    }
+    //   return NextResponse.json(transformedPages);
+    // } catch (dbError) {
+    //   console.error('Error accessing database directly:', dbError);
+    //   // Return empty array if both methods fail
+    //   return NextResponse.json([]);
+    // }
   } catch (error) {
-    console.error('Error in API route:', error);
+    console.log('Error in API route:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch pages' },
+      { error: `Failed to fetch pages ${error}` },
       { status: 500 }
     );
   }
