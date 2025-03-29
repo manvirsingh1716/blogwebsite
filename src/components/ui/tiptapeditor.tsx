@@ -101,7 +101,7 @@ const ToolbarButton = ({
 };
 
 interface TiptapEditorProps {
-  content: string;
+  content?: string;
   onChange: (html: string) => void;
 }
 
@@ -115,6 +115,8 @@ const FONT_SIZES = {
 
 const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
   const [currentSize, setCurrentSize] = useState("Normal");
+  const [isHtmlMode, setIsHtmlMode] = useState(false);
+  const [htmlContent, setHtmlContent] = useState('');
   const imageInputRef = React.useRef<HTMLInputElement>(null);
 
   const addImage = () => {
@@ -219,6 +221,48 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
     }
   };
 
+  const handleHtmlModeToggle = () => {
+    if (!isHtmlMode) {
+      // Switching to HTML mode
+      setHtmlContent(editor.getHTML());
+    } else {
+      // Switching back to rich text mode
+      editor.commands.setContent(htmlContent);
+      onChange(htmlContent);
+    }
+    setIsHtmlMode(!isHtmlMode);
+  };
+
+  const handleHtmlChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newHtml = e.target.value;
+    setHtmlContent(newHtml);
+    onChange(newHtml);
+  };
+
+  const wrapTextWithTag = (tag: string) => {
+    const textarea = document.querySelector('textarea');
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = htmlContent.substring(start, end);
+    const newText = `<${tag}>${selectedText}</${tag}>`;
+    
+    const newContent = htmlContent.substring(0, start) + newText + htmlContent.substring(end);
+    setHtmlContent(newContent);
+    onChange(newContent);
+  };
+
+  const insertHtmlElement = (element: string) => {
+    const textarea = document.querySelector('textarea');
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const newContent = htmlContent.substring(0, start) + element + htmlContent.substring(start);
+    setHtmlContent(newContent);
+    onChange(newContent);
+  };
+
   return (
     <div className="border rounded-lg bg-white">
       <input
@@ -231,41 +275,57 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
 
       {/* Editor Toolbar */}
       <div className="border-b p-2 flex flex-wrap gap-1 bg-gray-50">
-        {/* Heading Selector */}
+        {/* HTML Mode Toggle */}
         <div className="flex items-center gap-1 pr-2 border-r">
-          <div className="flex items-center gap-2">
-            <Type className="w-4 h-4 text-gray-600" />
-            <select
-              onChange={(e) => setHeading(parseInt(e.target.value))}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white text-gray-900"
-            >
-              <option value="0">Normal</option>
-              <option value="1">Heading 1</option>
-              <option value="2">Heading 2</option>
-              <option value="3">Heading 3</option>
-              <option value="4">Heading 4</option>
-              <option value="5">Heading 5</option>
-              <option value="6">Heading 6</option>
-            </select>
-          </div>
+          <button
+            onClick={handleHtmlModeToggle}
+            className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+              isHtmlMode 
+                ? "bg-gray-200 text-gray-900" 
+                : "bg-white text-gray-700 border border-gray-300"
+            )}
+          >
+            {isHtmlMode ? (
+              <>
+                <Type size={16} />
+                Rich Text
+              </>
+            ) : (
+              <>
+                <Code size={16} />
+                HTML
+              </>
+            )}
+          </button>
         </div>
 
+        {/* Always show these tools regardless of mode */}
         <div className="flex items-center gap-1 px-2 border-r">
           <ToolbarButton
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            isActive={editor.isActive("bold")}
+            onClick={() => isHtmlMode 
+              ? wrapTextWithTag('strong')
+              : editor.chain().focus().toggleBold().run()
+            }
+            isActive={isHtmlMode ? false : editor.isActive("bold")}
             icon={<Bold size={18} />}
             label="Bold"
           />
           <ToolbarButton
-            onClick={() => editor.chain().focus().toggleItalic().run()}
-            isActive={editor.isActive("italic")}
+            onClick={() => isHtmlMode 
+              ? wrapTextWithTag('em')
+              : editor.chain().focus().toggleItalic().run()
+            }
+            isActive={isHtmlMode ? false : editor.isActive("italic")}
             icon={<Italic size={18} />}
             label="Italic"
           />
           <ToolbarButton
-            onClick={() => editor.chain().focus().toggleStrike().run()}
-            isActive={editor.isActive("strike")}
+            onClick={() => isHtmlMode 
+              ? wrapTextWithTag('s')
+              : editor.chain().focus().toggleStrike().run()
+            }
+            isActive={isHtmlMode ? false : editor.isActive("strike")}
             icon={<Strikethrough size={18} />}
             label="Strike"
           />
@@ -366,10 +426,27 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
       </div>
 
       {/* Editor Content */}
-      <EditorContent
-        editor={editor}
-        className="prose prose-slate max-w-none focus:outline-none min-h-[300px] p-4 text-gray-900"
-      />
+      {isHtmlMode ? (
+        <div className="p-4">
+          <textarea
+            value={htmlContent}
+            onChange={handleHtmlChange}
+            className="w-full min-h-[300px] font-mono text-sm p-4 border rounded-lg focus:ring-2 focus:ring-blue-200 focus:outline-none bg-gray-50 text-gray-800"
+            spellCheck={false}
+            placeholder="Enter HTML here..."
+            style={{ 
+              resize: 'vertical',
+              lineHeight: '1.5',
+              tabSize: 2
+            }}
+          />
+        </div>
+      ) : (
+        <EditorContent 
+          editor={editor} 
+          className="prose prose-slate max-w-none focus:outline-none min-h-[300px] p-4 text-gray-900" 
+        />
+      )}
     </div>
   );
 };
