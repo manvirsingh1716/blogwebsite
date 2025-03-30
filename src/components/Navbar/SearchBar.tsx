@@ -7,18 +7,18 @@ const SearchBar = () => {
 
   return (
     <div className={`relative flex items-center transition-all duration-300 ${
-      isFocused ? 'w-[320px]' : 'w-[280px]'
+      isFocused ? 'w-[280px]' : 'w-[240px]'
     }`}>
       <div className={`relative w-full group ${
         isFocused 
           ? 'ring-2 ring-blue-400 shadow-lg bg-white' 
           : 'hover:ring-1 hover:ring-orange-200 bg-orange-50/50 hover:bg-white'
-      } rounded-full transition-all duration-300`}>
+      } rounded-lg transition-all duration-300`}>
         <input
           type="text"
           placeholder="Search notes, subjects..."
-          className="w-full py-2.5 pl-11 pr-4 text-sm text-gray-700 placeholder-gray-400 
-                    bg-transparent border-none rounded-full outline-none transition-all"
+          className="w-full py-2 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 
+                    bg-transparent border-none rounded-lg outline-none transition-all"
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         />

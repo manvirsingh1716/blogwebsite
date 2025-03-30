@@ -130,7 +130,6 @@ export function PageForm({ editPage = null }: PageFormProps) {
       if (!data || data.length === 0) {
         // Default templates if none exist in DB
         const defaultTemplates = [
-          
           {
             id: 'article',
             name: 'Article',
@@ -154,7 +153,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
             layout: {},
             createdAt: new Date(),
             updatedAt: new Date()
-          }
+          },
         ];
         setTemplates(defaultTemplates);
       } else {
@@ -405,14 +404,14 @@ export function PageForm({ editPage = null }: PageFormProps) {
               <div className="space-y-4">
                 {Array.from({ length: getCurrentLevel() + 1 }).map((_, level) => (
                   <div key={level}>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-800 mb-1">
                       Level {level + 1} {level >= 4 && "(Not shown in navbar)"}
                     </label>
                     <Select
                       value={selectedLevels[level]}
                       onValueChange={(value) => handleLevelChange(level, value)}
                     >
-                      <SelectTrigger className="w-full border-slate-200 focus:border-slate-400 focus:ring-slate-400">
+                      <SelectTrigger className="w-full border-slate-200 text-white focus:border-slate-400 focus:ring-slate-400">
                         <SelectValue placeholder={level === 0 ? "Select root page" : `Select level ${level + 1} page`} />
                       </SelectTrigger>
                       <SelectContent>
@@ -452,7 +451,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
                   setSelectedTemplate(value === '_none' ? '' : value);
                 }}
               >
-                <SelectTrigger className="w-full border-slate-200 focus:border-slate-400 focus:ring-slate-400">
+                <SelectTrigger className="w-full border-slate-200 text-white focus:border-slate-400 focus:ring-slate-400">
                   <SelectValue placeholder="Choose a template" />
                 </SelectTrigger>
                 <SelectContent>
@@ -468,7 +467,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
                 <Button
                   onClick={() => setStep(1)}
                   variant="outline"
-                  className="border-slate-200 text-slate-700 hover:bg-slate-50"
+                  className="border-slate-200 text-slate-800 hover:bg-slate-50"
                 >
                   Back to Path Selection
                 </Button>

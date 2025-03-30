@@ -85,29 +85,29 @@ export const navigationSections: NavigationSection[] = [
   {
     title: "Daily Current Affairs",
     items: [
-      { title: "Daily News Analysis", path: "/current-affairs/daily/news-analysis", icon: { image: newsImage } },
-      { title: "The Hindu Editorial", path: "/current-affairs/daily/hindu-editorial", icon: { image: newsImage } },
-      { title: "Indian Express Editorial", path: "/current-affairs/daily/express-editorial", icon: { image: newsImage } },
-      { title: "PIB Analysis", path: "/current-affairs/daily/pib", icon: { image: newsImage } },
-      { title: "Daily MCQ Quiz", path: "/current-affairs/daily/mcq-quiz", icon: { image: newsImage } },
-      { title: "Answer Writing Practice", path: "/current-affairs/daily/answer-writing", icon: { image: newsImage } },
+      { title: "Daily News Analysis", path: "/current-affairs/news-analysis", icon: { image: newsImage } },
+      { title: "The Hindu Editorial", path: "/current-affairs/hindu-editorial", icon: { image: newsImage } },
+      { title: "Indian Express Editorial", path: "/current-affairs/express-editorial", icon: { image: newsImage } },
+      { title: "PIB Analysis", path: "/current-affairs/pib", icon: { image: newsImage } },
+      { title: "Daily MCQ Quiz", path: "/current-affairs/mcq-quiz", icon: { image: newsImage } },
+      { title: "Answer Writing Practice", path: "/current-affairs/answer-writing", icon: { image: newsImage } },
     ]
   },
   {
     title: "Monthly Current Affairs",
     items: [
-      { title: "Monthly Compilation", path: "/current-affairs/monthly/compilation", icon: { image: newsImage } },
-      { title: "Yojana Magazine", path: "/current-affairs/monthly/yojana", icon: { image: newsImage } },
-      { title: "Kurukshetra Magazine", path: "/current-affairs/monthly/kurukshetra", icon: { image: newsImage } },
-      { title: "Science Reporter", path: "/current-affairs/monthly/science-reporter", icon: { image: newsImage } },
+      { title: "Monthly Compilation", path: "/current-affairs/compilation", icon: { image: newsImage } },
+      { title: "Yojana Magazine", path: "/current-affairs/yojana", icon: { image: newsImage } },
+      { title: "Kurukshetra Magazine", path: "/current-affairs/kurukshetra", icon: { image: newsImage } },
+      { title: "Science Reporter", path: "/current-affairs/science-reporter", icon: { image: newsImage } },
     ]
   },
   {
     title: "Yearly Current Affairs",
     items: [
-      { title: "Union Budget", path: "/current-affairs/yearly/union-budget", icon: { image: newsImage } },
-      { title: "Economic Survey", path: "/current-affairs/yearly/economic-survey", icon: { image: newsImage } },
-      { title: "Year End Review", path: "/current-affairs/yearly/year-end-review", icon: { image: newsImage } },
+      { title: "Union Budget", path: "/current-affairs/union-budget", icon: { image: newsImage } },
+      { title: "Economic Survey", path: "/current-affairs/economic-survey", icon: { image: newsImage } },
+      { title: "Year End Review", path: "/current-affairs/year-end-review", icon: { image: newsImage } },
     ]
   }
 ];

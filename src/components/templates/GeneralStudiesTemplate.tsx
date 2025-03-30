@@ -39,13 +39,13 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column - Main Image and Child Pages */}
-          <div className="lg:col-span-7">
+          {/* Left Column - Main Image and Content */}
+          <div className="lg:col-span-8">
             {/* Main Topic Image */}
-            <Card className="border-0 shadow-lg bg-white/80 overflow-hidden mb-8">
-              <div className="relative w-full h-64 md:h-80">
+            <Card className="border-0 shadow-xl bg-white/90 overflow-hidden mb-10 transform transition-all hover:scale-[1.02]">
+              <div className="relative w-full h-72 md:h-96">
                 <Image 
                   src={pageImage} 
                   alt={title}
@@ -53,23 +53,24 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
-                  <div className="p-6">
-                    <h2 className="text-2xl font-bold text-white">{title}</h2>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                  <div className="p-8">
+                    <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight">{title}</h1>
                   </div>
                 </div>
               </div>
             </Card>
 
-            {/* Child Pages Grid */}
+            {/* Related Topics Section */}
             {page.children && page.children.length > 0 && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Related Topics</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="mb-10">
+                <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center border-b-2 border-blue-500 pb-2 inline-block">
+                  Related Topics
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {page.children.map((child: any) => {
                     let childContent;
                     try {
-                      // Try to parse child content if it's a string
                       if (typeof child.content === 'string') {
                         childContent = JSON.parse(child.content);
                       } else {
@@ -86,20 +87,20 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
                       <Link 
                         href={`/${child.slug}`} 
                         key={child.id}
-                        className="group"
+                        className="group transform transition-all hover:-translate-y-1"
                       >
-                        <Card className="border-0 shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden h-full">
-                          <div className="relative w-full h-40">
+                        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden h-full bg-white/90">
+                          <div className="relative w-full h-48">
                             <Image 
                               src={childImage} 
                               alt={child.title}
                               fill
-                              className="object-cover group-hover:scale-105 transition-transform duration-300"
+                              className="object-cover group-hover:scale-105 transition-transform duration-500"
                               sizes="(max-width: 768px) 100vw, 33vw"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
-                              <div className="p-4">
-                                <h3 className="text-lg font-semibold text-white group-hover:text-blue-100 transition-colors">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end">
+                              <div className="p-6">
+                                <h3 className="text-xl font-semibold text-white group-hover:text-blue-100 transition-colors">
                                   {child.title}
                                 </h3>
                               </div>
@@ -112,15 +113,26 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
                 </div>
               </div>
             )}
+
+            {/* Main Content Section */}
+            <Card className="border-0 shadow-xl bg-white/90">
+              <CardContent className="p-10">
+                <div 
+                  className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-headings:text-center prose-headings:font-bold prose-headings:border-b-2 prose-headings:border-blue-500 prose-headings:pb-2 prose-headings:mb-6 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-img:rounded-lg prose-img:shadow-lg prose-strong:text-gray-900"
+                  dangerouslySetInnerHTML={{ __html: parsedContent.content || '' }} 
+                />
+              </CardContent>
+            </Card>
           </div>
 
           {/* Right Column - Sidebar Navigation */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-4">
             <div className="sticky top-8">
-              {/* Sidebar Navigation */}
-              <Card className="border-0 shadow-lg bg-white/80">
+              <Card className="border-0 shadow-xl bg-white/90 max-w-xs mx-auto lg:mx-0">
                 <CardContent className="p-6">
-                  <h2 className="text-xl font-bold mb-4 text-gray-900">Navigation</h2>
+                  <h2 className="text-2xl font-bold mb-6 text-gray-900 text-center border-b-2 border-blue-500 pb-2">
+                    Navigation
+                  </h2>
                   <SidebarNavigation 
                     currentPageId={id.toString()}
                     basePath={page.slug.split('/')[0]}
@@ -130,18 +142,6 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
               </Card>
             </div>
           </div>
-        </div>
-
-        {/* Main Content Section - Full Width Below */}
-        <div className="mt-8">
-          <Card className="border-0 shadow-lg bg-white/80">
-            <CardContent className="p-8">
-              <div 
-                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-blue-600"
-                dangerouslySetInnerHTML={{ __html: parsedContent.content || '' }} 
-              />
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>
