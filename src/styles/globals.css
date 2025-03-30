@@ -3,6 +3,11 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+/* Yellow icon styling */
+.yellow-icon {
+  filter: invert(70%) sepia(80%) saturate(1000%) hue-rotate(360deg) brightness(110%);
+}
+
 .prose h1 {
     font-size: 2.25rem;
     /* Example: 36px */
@@ -33,6 +38,11 @@
     margin-bottom: 0.5rem;
 }
 
+.prose h6 {
+    font-size: 1rem;
+    /* Example: 16px */
+    margin-bottom: 0.5rem;
+}
 .prose h6 {
     font-size: 1rem;
     /* Example: 16px */

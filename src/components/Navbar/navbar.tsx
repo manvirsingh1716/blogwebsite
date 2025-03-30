@@ -19,76 +19,161 @@ function NestedNavigation({
   level?: number;
 }) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [hoveredParent, setHoveredParent] = useState<string | null>(null);
 
   if (level === 1) {
     return (
-      <div className="flex gap-4">
+      <div className="flex gap-4 relative">
         {items.map((item) => (
-          <div key={item.slug} className="relative group">
+          <div 
+            key={item.slug} 
+            className="group"
+            onMouseEnter={() => {
+              setHoveredParent(item.slug);
+              if (item.children.length > 0) {
+                setOpenDropdown(item.children[0].slug);
+              }
+            }}
+            onMouseLeave={() => {
+              setHoveredParent(null);
+              setOpenDropdown(null);
+            }}
+          >
             <Link
               href={`/${item.slug}`}
-              className="px-3 py-2 text-gray-800 hover:text-blue-700 rounded-md text-sm font-bold transition-colors duration-200"
+              className="px-3 py-2 text-gray-800 hover:text-blue-700 rounded-md text-sm font-bold transition-colors duration-200 flex items-center"
             >
               {item.title}
+              {item.children.length > 0 && (
+                <svg 
+                  className="w-4 h-4 ml-1.5 fill-current opacity-80"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M12.7071 15.2929L19.7071 8.29289C20.0976 7.90237 20.0976 7.2692 19.7071 6.87868C19.3166 6.48815 18.6834 6.48815 18.2929 6.87868L12 13.1716L5.70711 6.87868C5.31658 6.48815 4.68342 6.48815 4.29289 6.87868C3.90237 7.2692 3.90237 7.90237 4.29289 8.29289L11.2929 15.2929C11.6834 15.6834 12.3166 15.6834 12.7071 15.2929Z"/>
+                </svg>
+              )}
             </Link>
             {item.children.length > 0 && (
-              <div className="absolute left-0 mt-2 w-[520px] h-auto invisible group-hover:visible bg-white rounded-xl shadow-xl border border-gray-100 z-50">
-                <div className="flex h-full">
-                  {/* Level 2 - Left column */}
-                  <div className="w-[200px] border-r border-gray-100 p-3 max-h-[400px] overflow-y-auto">
-                    {item.children.map((child) => (
-                      <div key={child.slug} className="mb-1">
-                        <Link
-                          href={`/${child.slug}`}
-                          className={`block px-3 py-2 text-gray-800 hover:bg-primary-50 hover:text-blue-700 rounded-md transition-colors duration-200 font-bold ${
-                            openDropdown === child.slug ? 'bg-gray-50 text-blue-700' : ''
-                          }`}
-                          onMouseEnter={() => setOpenDropdown(child.slug)}
-                        >
-                          {child.title}
-                        </Link>
+              <div className={`absolute left-0 mt-0 w-[800px] min-h-[350px] invisible group-hover:visible bg-white rounded-md shadow-lg border border-gray-200 z-50 ${
+                item.slug === 'current-affairs' ? 'p-6' : ''
+              }`}>
+                <div className={`${item.slug === 'current-affairs' ? 'grid grid-cols-4 gap-6' : 'flex h-full'}`}>
+                  {item.slug === 'current-affairs' ? (
+                    // Special layout for Current Affairs
+                    item.children.map((child) => (
+                      <div key={child.slug} className="space-y-4">
+                        <div className="space-y-2">
+                          <h3 className="text-[15px] font-bold text-gray-900 pb-2 border-b border-gray-100">
+                            {child.title}
+                          </h3>
+                          {child.children.length > 0 && (
+                            <div className="space-y-1">
+                              {child.children.map((grandChild) => (
+                                <Link
+                                  key={grandChild.slug}
+                                  href={`/${grandChild.slug}`}
+                                  className="block py-1.5 text-[13px] text-gray-600 hover:text-blue-600 transition-colors duration-150 hover:bg-gray-50 rounded px-2 flex items-center"
+                                >
+                                  <svg 
+                                    className="w-3 h-3 mr-2 fill-current"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path d="M9.29289 18.7071C8.90237 18.3166 8.90237 17.6834 9.29289 17.2929L14.5858 12L9.29289 6.70711C8.90237 6.31658 8.90237 5.68342 9.29289 5.29289C9.68342 4.90237 10.3166 4.90237 10.7071 5.29289L16.7071 11.2929C17.0976 11.6834 17.0976 12.3166 16.7071 12.7071L10.7071 18.7071C10.3166 19.0976 9.68342 19.0976 9.29289 18.7071Z"/>
+                                  </svg>
+                                  {grandChild.title}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                  
-                  {/* Level 3 and 4 - Right column */}
-                  <div className="flex-1 p-3 max-h-[400px] overflow-y-auto">
-                    {openDropdown &&
-                      items.map((item) =>
-                        item.children.map(
-                          (child) =>
-                            child.slug === openDropdown && (
-                              <div key={child.slug} className="space-y-1">
-                                {child.children.map((grandChild) => (
-                                  <div key={grandChild.slug} className="mb-3">
-                                    <Link
-                                      href={`/${grandChild.slug}`}
-                                      className="block px-3 py-2 text-gray-800 hover:bg-primary-50 hover:text-blue-700 rounded-md transition-colors duration-200 font-bold"
-                                    >
-                                      {grandChild.title}
-                                    </Link>
-                                    {grandChild.children.length > 0 && (
-                                      <div className="pl-3 mt-1 border-l-2 border-gray-100">
-                                        {grandChild.children.map(
-                                          (greatGrandChild) => (
-                                            <Link
-                                              key={greatGrandChild.slug}
-                                              href={`/${greatGrandChild.slug}`}
-                                              className="block px-3 py-1.5 text-sm text-gray-700 hover:bg-primary-50 hover:text-blue-700 rounded-md transition-colors duration-200"
+                    ))
+                  ) : (
+                    // Original layout for other dropdowns
+                    <>
+                      {/* Level 2 - Left column */}
+                      <div className="w-[250px] border-r border-gray-100 p-4 h-[350px] overflow-y-auto">
+                        {item.children.map((child) => (
+                          <div key={child.slug} className="mb-2">
+                            <Link
+                              href={`/${child.slug}`}
+                              className={` px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 text-sm font-medium flex items-center justify-between ${
+                                openDropdown === child.slug ? 'bg-gray-50 text-blue-600' : ''
+                              }`}
+                              onMouseEnter={() => setOpenDropdown(child.slug)}
+                            >
+                              <span>{child.title}</span>
+                              {child.children.length > 0 && (
+                                <svg
+                                  className="w-3 h-3 fill-current transform -rotate-90 opacity-80"
+                                  viewBox="0 0 24 24"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path d="M12.7071 15.2929L19.7071 8.29289C20.0976 7.90237 20.0976 7.2692 19.7071 6.87868C19.3166 6.48815 18.6834 6.48815 18.2929 6.87868L12 13.1716L5.70711 6.87868C5.31658 6.48815 4.68342 6.48815 4.29289 6.87868C3.90237 7.2692 3.90237 7.90237 4.29289 8.29289L11.2929 15.2929C11.6834 15.6834 12.3166 15.6834 12.7071 15.2929Z"/>
+                                </svg>
+                              )}
+                            </Link>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      {/* Level 3 and 4 - Right column */}
+                      <div className="flex-1 p-4 h-[350px] overflow-y-auto">
+                        {openDropdown &&
+                          items.map((parentItem) =>
+                            parentItem.slug === hoveredParent &&
+                            parentItem.children.map(
+                              (child) =>
+                                child.slug === openDropdown && (
+                                  <div key={child.slug}>
+                                    <div className="grid grid-cols-3 gap-4">
+                                      {child.children.map((grandChild) => (
+                                        <div key={grandChild.slug} className="mb-4">
+                                          <Link
+                                            href={`/${grandChild.slug}`}
+                                            className="block px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 text-sm font-medium flex items-center"
+                                          >
+                                            <svg 
+                                              className="w-3 h-3 mr-2 fill-current"
+                                              viewBox="0 0 24 24"
+                                              xmlns="http://www.w3.org/2000/svg"
                                             >
-                                              {greatGrandChild.title}
-                                            </Link>
-                                          )
-                                        )}
-                                      </div>
-                                    )}
+                                              <path d="M9.29289 18.7071C8.90237 18.3166 8.90237 17.6834 9.29289 17.2929L14.5858 12L9.29289 6.70711C8.90237 6.31658 8.90237 5.68342 9.29289 5.29289C9.68342 4.90237 10.3166 4.90237 10.7071 5.29289L16.7071 11.2929C17.0976 11.6834 17.0976 12.3166 16.7071 12.7071L10.7071 18.7071C10.3166 19.0976 9.68342 19.0976 9.29289 18.7071Z"/>
+                                            </svg>
+                                            {grandChild.title}
+                                          </Link>
+                                          {grandChild.children.length > 0 && (
+                                            <div className="pl-3 mt-2 space-y-1 border-l-2 border-gray-100">
+                                              {grandChild.children.map((greatGrandChild) => (
+                                                <Link
+                                                  key={greatGrandChild.slug}
+                                                  href={`/${greatGrandChild.slug}`}
+                                                  className="block px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 flex items-center"
+                                                >
+                                                  <svg 
+                                                    className="w-3 h-3 mr-2 fill-current"
+                                                    viewBox="0 0 24 24"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                  >
+                                                    <path d="M9.29289 18.7071C8.90237 18.3166 8.90237 17.6834 9.29289 17.2929L14.5858 12L9.29289 6.70711C8.90237 6.31658 8.90237 5.68342 9.29289 5.29289C9.68342 4.90237 10.3166 4.90237 10.7071 5.29289L16.7071 11.2929C17.0976 11.6834 17.0976 12.3166 16.7071 12.7071L10.7071 18.7071C10.3166 19.0976 9.68342 19.0976 9.29289 18.7071Z"/>
+                                                  </svg>
+                                                  {greatGrandChild.title}
+                                                </Link>
+                                              ))}
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
                                   </div>
-                                ))}
-                              </div>
+                                )
                             )
-                        )
-                      )}
-                  </div>
+                          )}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -302,33 +387,19 @@ export default function Navbar({ navigation }: NavbarProps) {
                     >
                       {mobileMenuOpen === item.slug ? (
                         <svg
-                          className="h-5 w-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
+                          className="h-5 w-5 transform rotate-180 fill-current opacity-80"
                           viewBox="0 0 24 24"
-                          stroke="currentColor"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 15l7-7 7 7"
-                          />
+                          <path d="M12.7071 15.2929L19.7071 8.29289C20.0976 7.90237 20.0976 7.2692 19.7071 6.87868C19.3166 6.48815 18.6834 6.48815 18.2929 6.87868L12 13.1716L5.70711 6.87868C5.31658 6.48815 4.68342 6.48815 4.29289 6.87868C3.90237 7.2692 3.90237 7.90237 4.29289 8.29289L11.2929 15.2929C11.6834 15.6834 12.3166 15.6834 12.7071 15.2929Z"/>
                         </svg>
                       ) : (
                         <svg
-                          className="h-5 w-5"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
+                          className="h-5 w-5 fill-current opacity-80"
                           viewBox="0 0 24 24"
-                          stroke="currentColor"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
+                          <path d="M12.7071 15.2929L19.7071 8.29289C20.0976 7.90237 20.0976 7.2692 19.7071 6.87868C19.3166 6.48815 18.6834 6.48815 18.2929 6.87868L12 13.1716L5.70711 6.87868C5.31658 6.48815 4.68342 6.48815 4.29289 6.87868C3.90237 7.2692 3.90237 7.90237 4.29289 8.29289L11.2929 15.2929C11.6834 15.6834 12.3166 15.6834 12.7071 15.2929Z"/>
                         </svg>
                       )}
                     </button>

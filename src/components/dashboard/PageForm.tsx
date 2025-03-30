@@ -131,25 +131,9 @@ export function PageForm({ editPage = null }: PageFormProps) {
         // Default templates if none exist in DB
         const defaultTemplates = [
           {
-            id: 'current-affairs',
-            name: 'Current Affairs',
-            description: 'Template for current affairs articles',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-          {
             id: 'article',
             name: 'Article',
             description: 'Template for general articles',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-          {
-            id: 'study-material',
-            name: 'Study Material',
-            description: 'Template for study materials',
             layout: {},
             createdAt: new Date(),
             updatedAt: new Date()
@@ -170,22 +154,6 @@ export function PageForm({ editPage = null }: PageFormProps) {
             createdAt: new Date(),
             updatedAt: new Date()
           },
-          {
-            id: 'blog',
-            name: 'Blog',
-            description: 'Template for blog posts',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-          {
-            id: 'about',
-            name: 'About Page',
-            description: 'Template for about pages',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          }
         ];
         setTemplates(defaultTemplates);
       } else {
@@ -436,14 +404,14 @@ export function PageForm({ editPage = null }: PageFormProps) {
               <div className="space-y-4">
                 {Array.from({ length: getCurrentLevel() + 1 }).map((_, level) => (
                   <div key={level}>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-800 mb-1">
                       Level {level + 1} {level >= 4 && "(Not shown in navbar)"}
                     </label>
                     <Select
                       value={selectedLevels[level]}
                       onValueChange={(value) => handleLevelChange(level, value)}
                     >
-                      <SelectTrigger className="w-full border-slate-200 focus:border-slate-400 focus:ring-slate-400">
+                      <SelectTrigger className="w-full border-slate-200 text-white focus:border-slate-400 focus:ring-slate-400">
                         <SelectValue placeholder={level === 0 ? "Select root page" : `Select level ${level + 1} page`} />
                       </SelectTrigger>
                       <SelectContent>
@@ -483,7 +451,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
                   setSelectedTemplate(value === '_none' ? '' : value);
                 }}
               >
-                <SelectTrigger className="w-full border-slate-200 focus:border-slate-400 focus:ring-slate-400">
+                <SelectTrigger className="w-full border-slate-200 text-white focus:border-slate-400 focus:ring-slate-400">
                   <SelectValue placeholder="Choose a template" />
                 </SelectTrigger>
                 <SelectContent>
@@ -499,7 +467,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
                 <Button
                   onClick={() => setStep(1)}
                   variant="outline"
-                  className="border-slate-200 text-slate-700 hover:bg-slate-50"
+                  className="border-slate-200 text-slate-800 hover:bg-slate-50"
                 >
                   Back to Path Selection
                 </Button>

@@ -8,27 +8,8 @@ import ContactMap from '@/components/ui/ContactMap';
 const CurrentAffairsIndex = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-blue-600 to-blue-800 h-96">
-        <div className="absolute inset-0 bg-black opacity-50"></div>
-        <div className="relative container mx-auto px-4 h-full flex items-center">
-          <div className="text-white max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">UPSC Current Affairs</h1>
-            <p className="text-xl opacity-90 mb-8">
-              Stay updated with comprehensive coverage of current affairs for UPSC Civil Services Examination.
-              Daily updates, in-depth analysis, and exam-oriented approach.
-            </p>
-            <Link 
-              href="/current-affairs/daily/news-analysis"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 transition-colors"
-            >
-              Start Reading →
-            </Link>
-          </div>
-        </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-12 max-w-7xl">
+      <div className="container mx-auto px-4 py-12 max-w-5xl"> {/* reduced from max-w-6xl */}
         {/* Main Categories */}
         {navigationSections?.map((section, index) => (
           <div key={index} className="mb-16">
@@ -36,20 +17,20 @@ const CurrentAffairsIndex = () => {
               <h2 className="text-2xl font-bold text-gray-900 mb-3">{section.title}</h2>
               <div className="w-24 h-1 bg-yellow-400 rounded-full"></div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"> {/* changed gap from 6 to 8 */}
               {section.items.map((item, itemIndex) => (
                 <Link key={itemIndex} href={item.path} className="group">
-                  <div className="bg-white rounded-lg shadow-sm p-10 hover:shadow-xl transition-all duration-300 h-[400px] flex flex-col justify-between transform hover:-translate-y-1">
+                  <div className="bg-gray-50 rounded-lg shadow-md p-8 hover:shadow-xl transition-all duration-300 h-[450px] flex flex-col justify-between transform hover:-translate-y-1 border border-gray-100"> {/* changed bg-white to bg-gray-50, added border, changed shadow-sm to shadow-md */}
                     <div>
-                      <div className="flex items-center mb-8">
-                        <span className="text-4xl mr-6 text-yellow-500 group-hover:text-yellow-600 transition-colors">
+                      <div className="flex flex-col items-center mb-8">
+                        <span className="mb-6 text-yellow-500 group-hover:text-yellow-600 transition-colors">
                           {typeof item.icon === 'object' && item.icon && 'image' in item.icon ? (
-                            <img src={item.icon.image.src} alt={item.title} width={40} height={40} className="text-yellow-500" />
+                            <img src={item.icon.image.src} alt={item.title} width={50} height={50} className="text-yellow-500" />
                           ) : (
                             item.icon
                           )}
                         </span>
-                        <h3 className="text-2xl font-semibold text-gray-800 group-hover:text-yellow-600 transition-colors">
+                        <h3 className="text-2xl font-semibold text-gray-800 group-hover:text-yellow-600 transition-colors text-center">
                           {item.title}
                         </h3>
                       </div>

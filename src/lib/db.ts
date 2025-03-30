@@ -5,7 +5,7 @@ const prismaClientSingleton = () => {
   return new PrismaClient({
     datasources: {
       db: {
-        url: "postgres://lucav:lucav@localhost:5431/db"
+        url: "postgresql://neondb_owner:npg_cBLVKiA08bpY@ep-polished-glitter-a5woj7fo-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require"
       }
     }
   })
