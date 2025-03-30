@@ -256,6 +256,26 @@ const TiptapEditor = ({ content, onChange }: TiptapEditorProps) => {
         />
         {!isHtmlMode && (
           <>
+            <select
+              className="h-8 rounded border border-input bg-transparent px-2 text-sm"
+              value={editor.isActive('heading') ? `h${editor.getAttributes('heading').level}` : ''}
+              onChange={(e) => {
+                if (e.target.value === '') {
+                  editor.chain().focus().setParagraph().run();
+                } else {
+                  const level = parseInt(e.target.value.replace('h', ''));
+                  setHeading(level);
+                }
+              }}
+            >
+              <option value="">Normal</option>
+              <option value="h1">Heading 1</option>
+              <option value="h2">Heading 2</option>
+              <option value="h3">Heading 3</option>
+              <option value="h4">Heading 4</option>
+              <option value="h5">Heading 5</option>
+              <option value="h6">Heading 6</option>
+            </select>
             <ToolbarButton
               onClick={() => editor.chain().focus().toggleBold().run()}
               icon={<Bold className="w-5 h-5" />}

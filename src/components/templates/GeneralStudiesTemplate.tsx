@@ -118,7 +118,14 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
             <Card className="border-0 shadow-xl bg-white/90">
               <CardContent className="p-10">
                 <div 
-                  className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-headings:text-center prose-headings:font-bold prose-headings:border-b-2 prose-headings:border-blue-500 prose-headings:pb-2 prose-headings:mb-6 prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-img:rounded-lg prose-img:shadow-lg prose-strong:text-gray-900"
+                  className="prose prose-lg max-w-none
+                    prose-h1:text-gray-900 prose-h1:text-center prose-h1:font-bold prose-h1:border-b-2 prose-h1:border-yellow-400 prose-h1:pb-2 prose-h1:mb-6
+                    prose-h2:text-gray-900 prose-h2:text-center prose-h2:font-bold prose-h2:border-b-2 prose-h2:border-yellow-400 prose-h2:pb-2 prose-h2:mb-6
+                    prose-h3:text-gray-900 prose-h3:text-center prose-h3:font-bold prose-h3:pb-2 prose-h3:mb-6
+                    prose-h4:text-gray-900 prose-h4:text-center prose-h4:font-bold prose-h4:pb-2 prose-h4:mb-6
+                    prose-h5:text-gray-900 prose-h5:text-center prose-h5:font-bold prose-h5:pb-2 prose-h5:mb-6
+                    prose-h6:text-gray-900 prose-h6:text-center prose-h6:font-bold prose-h6:pb-2 prose-h6:mb-6
+                    prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-blue-600 hover:prose-a:text-blue-800 prose-img:rounded-lg prose-img:shadow-lg prose-strong:text-gray-900"
                   dangerouslySetInnerHTML={{ __html: parsedContent.content || '' }} 
                 />
               </CardContent>
