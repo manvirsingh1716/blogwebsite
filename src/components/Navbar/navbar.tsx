@@ -377,6 +377,7 @@ export default function Navbar({ navigation }: NavbarProps) {
                   <Link
                     href={`/${item.slug}`}
                     className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md"
+                    onClick={() => setIsOpen(false)}
                   >
                     {item.title}
                   </Link>
@@ -412,6 +413,7 @@ export default function Navbar({ navigation }: NavbarProps) {
                         key={child.slug}
                         href={`/${child.slug}`}
                         className="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md"
+                        onClick={() => setIsOpen(false)}
                       >
                         {child.title}
                       </Link>
@@ -423,12 +425,12 @@ export default function Navbar({ navigation }: NavbarProps) {
             
             {/* About and Blogs links in mobile menu */}
             <Link href="/about" passHref>
-              <span className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md">
+              <span className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md" onClick={() => setIsOpen(false)}>
                 About 99Notes
               </span>
             </Link>
             <Link href="/blogs" passHref>
-              <span className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md">
+              <span className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md" onClick={() => setIsOpen(false)}>
                 Blogs
               </span>
             </Link>

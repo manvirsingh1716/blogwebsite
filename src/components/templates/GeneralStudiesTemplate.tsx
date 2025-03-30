@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
 import SidebarNavigation from '@/components/navigation/SidebarNavigation';
+import SearchBar from '@/components/Navbar/SearchBar';
 
 interface GeneralStudiesContent {
   title: string;
@@ -135,6 +136,13 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
           {/* Right Column - Sidebar Navigation */}
           <div className="lg:col-span-4">
             <div className="sticky top-8">
+              {/* Add SearchBar */}
+              <Card className="border-0 shadow-xl bg-white/90 max-w-xs mx-auto lg:mx-0 mb-6">
+                <CardContent className="p-6">
+                  <SearchBar />
+                </CardContent>
+              </Card>
+
               <Card className="border-0 shadow-xl bg-white/90 max-w-xs mx-auto lg:mx-0">
                 <CardContent className="p-6">
                   <h2 className="text-2xl font-bold mb-6 text-gray-900 text-center border-b-2 border-blue-500 pb-2">

@@ -143,6 +143,9 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
   return (
     <nav className="w-full max-h-[80vh] overflow-y-auto custom-scrollbar space-y-3">
+      <div className="px-4">
+        {pages.map(page => renderNavItem(page))}
+      </div>
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
@@ -159,7 +162,6 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
           background: #94a3b8;
         }
       `}</style>
-      {pages.map(page => renderNavItem(page))}
     </nav>
   );
 };

@@ -111,34 +111,46 @@ export const UpscNotesTemplate: React.FC<UpscNotesTemplateProps> = ({
               {mainContent ? (
                 <div
                   className="prose prose-lg max-w-none
-                    prose-headings:text-blue-600 
                     prose-headings:font-bold 
                     prose-headings:text-center
-                    prose-headings:border-b 
-                    prose-headings:border-blue-200 
-                    prose-headings:pb-2 
                     prose-headings:mb-6
+                    prose-h1:border-b 
+                    prose-h1:border-yellow-500 
+                    prose-h1:pb-2 
                     prose-h1:text-3xl
+                    prose-h2:border-b 
+                    prose-h2:border-yellow-500 
+                    prose-h2:pb-2 
                     prose-h2:text-2xl
                     prose-h3:text-xl
-                    prose-p:text-gray-600
+                    prose-h3:border-0
+                    prose-h4:border-0
+                    prose-h5:border-0
+                    prose-h6:border-0
+                    prose-p:text-gray-700
                     prose-p:leading-relaxed
+                    prose-p:my-4
                     prose-a:text-blue-600 
                     prose-a:no-underline 
                     hover:prose-a:text-blue-500
                     prose-a:transition-colors
-                    prose-strong:text-blue-700
+                    prose-strong:text-gray-800
                     prose-ul:list-disc
                     prose-ul:pl-6
+                    prose-ul:my-4
                     prose-ol:pl-6
-                    prose-li:marker:text-blue-500
+                    prose-ol:my-4
+                    prose-li:marker:text-gray-500
+                    prose-li:mb-2
                     prose-blockquote:border-l-4
-                    prose-blockquote:border-blue-300
-                    prose-blockquote:bg-blue-50
+                    prose-blockquote:border-gray-300
+                    prose-blockquote:bg-gray-50
                     prose-blockquote:p-4
                     prose-blockquote:rounded-r-lg
+                    prose-blockquote:my-6
                     prose-img:rounded-lg
-                    prose-img:shadow-md"
+                    prose-img:shadow-md
+                    prose-img:my-8"
                   dangerouslySetInnerHTML={{ __html: mainContent }}
                 />
               ) : (
