@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import logo from "../../../public/logo.png";
+import SocialMedia from "../navigation/socialmedia";
 
 interface FooterLink {
   slug: string;
@@ -45,48 +46,8 @@ const Footer = ({ footerSections }: FooterProps) => {
                 <Image src={logo} alt="Logo" className="h-12" />
               </Link>
             </div>
-            <div className="flex space-x-6">
-              {/* Social Media Links */}
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-blue-600"
-              >
-                <i className="fab fa-facebook"></i>
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-blue-600"
-              >
-                <i className="fab fa-twitter"></i>
-              </a>
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-blue-600"
-              >
-                <i className="fab fa-instagram"></i>
-              </a>
-              <a
-                href="https://telegram.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-blue-600"
-              >
-                <i className="fab fa-telegram"></i>
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-blue-600"
-              >
-                <i className="fab fa-youtube"></i>
-              </a>
+            <div className="w-full md:w-auto max-w-sm">
+              <SocialMedia />
             </div>
           </div>
           <div className="text-center mt-6">

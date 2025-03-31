@@ -5,8 +5,9 @@ import { BaseTemplateProps } from './types';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
-import SidebarNavigation from '@/components/navigation/SidebarNavigation';
+import { TableOfContents } from '@/components/navigation/TableOfContents';
 import SearchBar from '@/components/Navbar/SearchBar';
+import SocialMedia from '@/components/navigation/socialmedia';
 
 interface GeneralStudiesContent {
   title: string;
@@ -43,7 +44,7 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column - Main Image and Content */}
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-8 xl:col-span-9">
             {/* Main Topic Image */}
             <Card className="border-0 shadow-xl bg-white/90 overflow-hidden mb-10 transform transition-all hover:scale-[1.02]">
               <div className="relative w-full h-72 md:h-96">
@@ -133,30 +134,40 @@ export const GeneralStudiesTemplate: React.FC<BaseTemplateProps> = ({ page }) =>
             </Card>
           </div>
 
-          {/* Right Column - Sidebar Navigation */}
-          <div className="lg:col-span-4">
-            <div className="sticky top-8">
-              {/* Add SearchBar */}
-              <Card className="border-0 shadow-xl bg-white/90 max-w-xs mx-auto lg:mx-0 mb-6">
-                <CardContent className="p-6">
-                  <SearchBar />
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-xl bg-white/90 max-w-xs mx-auto lg:mx-0">
-                <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold mb-6 text-gray-900 text-center border-b-2 border-blue-500 pb-2">
-                    Navigation
-                  </h2>
-                  <SidebarNavigation 
-                    currentPageId={id.toString()}
-                    basePath={page.slug.split('/')[0]}
-                    hideParent={true}
-                  />
-                </CardContent>
-              </Card>
+          {/* Right Sidebar */}
+          <aside className="lg:col-span-4 xl:col-span-3">
+            {/* Search Bar - Always visible at top */}
+            <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl mb-6">
+              <SearchBar />
             </div>
-          </div>
+
+            {/* Sticky Container */}
+            <div className="relative">
+              <div className="sticky top-8 space-y-6">
+                {/* Table of Contents Section */}
+                <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2 flex items-center gap-2">
+                    <span className="text-blue-500">📑</span>
+                    <span>Table of Contents</span>
+                  </h3>
+                  <div className="pr-2">
+                    <TableOfContents content={parsedContent.content} />
+                  </div>
+                </div>
+
+                {/* Social Media Section */}
+                <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2 flex items-center gap-2">
+                    <span className="text-blue-500">🌐</span>
+                    <span>Connect With Us</span>
+                  </h3>
+                  <div className="py-2">
+                    <SocialMedia />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </div>

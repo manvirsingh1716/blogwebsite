@@ -11,6 +11,10 @@ interface NavbarProps {
   navigation: NavItem[];
 }
 
+interface OpenMenuState {
+  [key: string]: boolean;
+}
+
 function NestedNavigation({
   items,
   level = 1,
@@ -189,7 +193,7 @@ function NestedNavigation({
 export default function Navbar({ navigation }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState<string | null>(null);
+  const [openMenus, setOpenMenus] = useState<OpenMenuState>({});
 
   useEffect(() => {
     const handleScroll = () => {
@@ -202,7 +206,10 @@ export default function Navbar({ navigation }: NavbarProps) {
   }, []);
 
   const toggleMobileSubmenu = (slug: string) => {
-    setMobileMenuOpen(mobileMenuOpen === slug ? null : slug);
+    setOpenMenus(prev => ({
+      ...prev,
+      [slug]: !prev[slug]
+    }));
   };
 
   return (
@@ -361,8 +368,8 @@ export default function Navbar({ navigation }: NavbarProps) {
         <div
           className={`lg:hidden transform transition-all duration-300 ease-in-out ${
             isOpen 
-              ? "translate-y-0 opacity-100" 
-              : "-translate-y-2 opacity-0 pointer-events-none"
+              ? "translate-y-0 opacity-100 max-h-[80vh] overflow-y-auto" 
+              : "-translate-y-2 opacity-0 pointer-events-none max-h-0"
           } bg-white/95 backdrop-blur-lg shadow-lg`}
         >
           <div className="px-2 pt-2 pb-3 space-y-1">
@@ -386,44 +393,105 @@ export default function Navbar({ navigation }: NavbarProps) {
                       onClick={() => toggleMobileSubmenu(item.slug)}
                       className="px-2 py-1 text-gray-500"
                     >
-                      {mobileMenuOpen === item.slug ? (
-                        <svg
-                          className="h-5 w-5 transform rotate-180 fill-current opacity-80"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M12.7071 15.2929L19.7071 8.29289C20.0976 7.90237 20.0976 7.2692 19.7071 6.87868C19.3166 6.48815 18.6834 6.48815 18.2929 6.87868L12 13.1716L5.70711 6.87868C5.31658 6.48815 4.68342 6.48815 4.29289 6.87868C3.90237 7.2692 3.90237 7.90237 4.29289 8.29289L11.2929 15.2929C11.6834 15.6834 12.3166 15.6834 12.7071 15.2929Z"/>
-                        </svg>
-                      ) : (
-                        <svg
-                          className="h-5 w-5 fill-current opacity-80"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path d="M12.7071 15.2929L19.7071 8.29289C20.0976 7.90237 20.0976 7.2692 19.7071 6.87868C19.3166 6.48815 18.6834 6.48815 18.2929 6.87868L12 13.1716L5.70711 6.87868C5.31658 6.48815 4.68342 6.48815 4.29289 6.87868C3.90237 7.2692 3.90237 7.90237 4.29289 8.29289L11.2929 15.2929C11.6834 15.6834 12.3166 15.6834 12.7071 15.2929Z"/>
-                        </svg>
-                      )}
+                      <svg
+                        className={`h-5 w-5 transform transition-transform duration-200 ${
+                          openMenus[item.slug] ? 'rotate-180' : ''
+                        }`}
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                      >
+                        <path d="M12.7071 15.2929L19.7071 8.29289C20.0976 7.90237 20.0976 7.2692 19.7071 6.87868C19.3166 6.48815 18.6834 6.48815 18.2929 6.87868L12 13.1716L5.70711 6.87868C5.31658 6.48815 4.68342 6.48815 4.29289 6.87868C3.90237 7.2692 3.90237 7.90237 4.29289 8.29289L11.2929 15.2929C11.6834 15.6834 12.3166 15.6834 12.7071 15.2929Z"/>
+                      </svg>
                     </button>
                   )}
                 </div>
-                {mobileMenuOpen === item.slug && item.children.length > 0 && (
+                {openMenus[item.slug] && item.children.length > 0 && (
                   <div className="pl-4 space-y-1 mt-1">
                     {item.children.map((child) => (
-                      <Link
-                        key={child.slug}
-                        href={`/${child.slug}`}
-                        className="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        {child.title}
-                      </Link>
+                      <div key={child.slug} className="py-1">
+                        <div className="flex items-center justify-between">
+                          <Link
+                            href={`/${child.slug}`}
+                            className="block px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {child.title}
+                          </Link>
+                          {child.children.length > 0 && (
+                            <button
+                              onClick={() => toggleMobileSubmenu(child.slug)}
+                              className="px-2 py-1 text-gray-500"
+                            >
+                              <svg
+                                className={`h-4 w-4 transform transition-transform duration-200 ${
+                                  openMenus[child.slug] ? 'rotate-180' : ''
+                                }`}
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor"
+                              >
+                                <path d="M12.7071 15.2929L19.7071 8.29289C20.0976 7.90237 20.0976 7.2692 19.7071 6.87868C19.3166 6.48815 18.6834 6.48815 18.2929 6.87868L12 13.1716L5.70711 6.87868C5.31658 6.48815 4.68342 6.48815 4.29289 6.87868C3.90237 7.2692 3.90237 7.90237 4.29289 8.29289L11.2929 15.2929C11.6834 15.6834 12.3166 15.6834 12.7071 15.2929Z"/>
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                        {openMenus[child.slug] && child.children.length > 0 && (
+                          <div className="pl-4 space-y-1 mt-1">
+                            {child.children.map((grandChild) => (
+                              <div key={grandChild.slug} className="py-1">
+                                <div className="flex items-center justify-between">
+                                  <Link
+                                    href={`/${grandChild.slug}`}
+                                    className="block px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md"
+                                    onClick={() => setIsOpen(false)}
+                                  >
+                                    {grandChild.title}
+                                  </Link>
+                                  {grandChild.children.length > 0 && (
+                                    <button
+                                      onClick={() => toggleMobileSubmenu(grandChild.slug)}
+                                      className="px-2 py-1 text-gray-500"
+                                    >
+                                      <svg
+                                        className={`h-4 w-4 transform transition-transform duration-200 ${
+                                          openMenus[grandChild.slug] ? 'rotate-180' : ''
+                                        }`}
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="currentColor"
+                                      >
+                                        <path d="M12.7071 15.2929L19.7071 8.29289C20.0976 7.90237 20.0976 7.2692 19.7071 6.87868C19.3166 6.48815 18.6834 6.48815 18.2929 6.87868L12 13.1716L5.70711 6.87868C5.31658 6.48815 4.68342 6.48815 4.29289 6.87868C3.90237 7.2692 3.90237 7.90237 4.29289 8.29289L11.2929 15.2929C11.6834 15.6834 12.3166 15.6834 12.7071 15.2929Z"/>
+                                      </svg>
+                                    </button>
+                                  )}
+                                </div>
+                                {openMenus[grandChild.slug] && grandChild.children.length > 0 && (
+                                  <div className="pl-4 space-y-1 mt-1">
+                                    {grandChild.children.map((greatGrandChild) => (
+                                      <Link
+                                        key={greatGrandChild.slug}
+                                        href={`/${greatGrandChild.slug}`}
+                                        className="block px-3 py-2 text-sm text-gray-500 hover:bg-gray-50 rounded-md"
+                                        onClick={() => setIsOpen(false)}
+                                      >
+                                        {greatGrandChild.title}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 )}
               </div>
             ))}
             
-            {/* About and Blogs links in mobile menu */}
+            {/* About and Blogs links remain unchanged */}
             <Link href="/about" passHref>
               <span className="block px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-md" onClick={() => setIsOpen(false)}>
                 About 99Notes

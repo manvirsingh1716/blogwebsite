@@ -7,6 +7,7 @@ import SearchBar from "@/components/Navbar/SearchBar";
 import Image from "next/image";
 import { ChevronRight, X } from "lucide-react";
 import SocialMedia from "@/components/navigation/socialmedia";
+import ContactForm from "@/components/common/ContactForm/ContactForm";
 
 interface ArticleContent {
   content: string;
@@ -43,7 +44,7 @@ export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
         className="fixed left-0 top-1/2 -translate-y-1/2 z-[100] cursor-pointer 
         flex items-center bg-white border border-gray-200 rounded-r-lg 
         px-2 py-3 shadow-md hover:bg-gray-50 transition-all duration-300 
-        peer-checked:translate-x-[280px] hover:border-gray-300 group"
+        peer-checked:translate-x-[320px] hover:border-gray-300 group"
       >
         <div className="flex flex-col items-center gap-1">
           <span className="text-black text-sm font-medium tracking-wide rotate-180 
@@ -56,7 +57,7 @@ export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
       </label>
 
       {/* TOC Sidebar */}
-      <div className="fixed left-0 top-0 h-full w-[280px] bg-white/95 
+      <div className="fixed left-0 top-0 h-full w-[320px] bg-white/95 
       backdrop-blur-sm shadow-xl -translate-x-full peer-checked:translate-x-0 
       transition-all duration-300 ease-in-out z-[90] border-r-2 border-gray-200">
         {/* Close Button - Moved outside scrollable area */}
@@ -88,7 +89,7 @@ export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
 
       {/* Main Content with padding adjustment */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 
-      transition-all duration-300 md:peer-checked:pl-[280px]">
+      transition-all duration-300 md:peer-checked:pl-[320px]">
         <Breadcrumb />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -115,7 +116,7 @@ export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
               <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 relative inline-block">
                   {title}
-                  <span className="absolute bottom-0 left-0 w-full h-1 bg-blue-500 rounded-full"></span>
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-yellow-500 rounded-full"></span>
                 </h1>
                 {date && (
                   <div className="text-gray-600 mb-2">
@@ -202,7 +203,12 @@ export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
                   </div>
                 </div>
 
-                {/* Tags Section - Fixed below Social Media */}
+                {/* Contact Form Section */}
+                <div className="bg-white border border-blue-100 rounded-xl shadow-lg">
+                  <ContactForm />
+                </div>
+
+                {/* Tags Section - Fixed below Contact Form */}
                 {tags && tags.length > 0 && (
                   <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
                     <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2">

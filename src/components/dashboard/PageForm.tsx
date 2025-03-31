@@ -102,6 +102,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
 
   const fetchPages = async () => {
     try {
+      // if url /add else if add-current-affair
       const response = await fetch(`${env.API}/page`, {
         headers: { Authorization: `Bearer ${token}` }
       });
