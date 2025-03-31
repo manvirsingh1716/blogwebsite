@@ -52,7 +52,7 @@ const recruitmentGroups = [
 
 const RecruitmentExams: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white ">
       <Head>
         <title>Government Recruitment Exams - 99Notes</title>
         <meta 
@@ -62,55 +62,50 @@ const RecruitmentExams: React.FC = () => {
       </Head>
 
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-blue-600 to-blue-800 py-16">
-        <div className="absolute inset-0 bg-black opacity-50"></div>
-        <div className="relative container mx-auto px-4">
-          <div className="text-center text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Government Recruitment Exams</h1>
-            <p className="text-xl opacity-90 max-w-3xl mx-auto">
-              Prepare for various government job examinations with comprehensive study materials, exam patterns, and discussions.
-            </p>
-          </div>
-        </div>
+      <div className="py-16 text-center">
+        <h1 className="relative inline-block">
+          <span className="text-3xl md:text-3xl font-extrabold text-gray-900 tracking-tight block underline decoration-4 underline-offset-4 decoration-[#fc6203] ">
+            Crack Recruitment Exams With Confidence
+            
+          </span>
+          
+          <span className="text-1xl md:text-2xl text-gray-600 font-medium mt-2 block">
+            Your Ultimate Preparation Guide
+          </span>
+          <span className="absolute -bottom-2 left-0 w-full h-4 bg-yellow-300 opacity-40 -z-10 transform -skew-x-12"></span>
+        </h1>
       </div>
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12 max-w-5xl">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {recruitmentGroups.map((group) => (
-            <div key={group.title} className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center gap-3">
-                  {group.icon}
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900">{group.title}</h2>
-                    <p className="text-gray-600 mt-1">{group.description}</p>
+            <Link 
+              key={group.title} 
+              href={group.path}
+              className="group"
+            >
+              <div className="bg-gray-50 rounded-lg shadow-md p-8 hover:shadow-xl transition-all duration-300 h-[450px] flex flex-col justify-between transform hover:-translate-y-1 border border-gray-100">
+                <div>
+                  <div className="flex flex-col items-center mb-8">
+                    <span className="mb-6 text-yellow-500 group-hover:text-yellow-600 transition-colors">
+                      {group.icon}
+                    </span>
+                    <h2 className="text-2xl font-semibold text-gray-800 group-hover:text-yellow-600 transition-colors text-center">
+                      {group.title}
+                    </h2>
                   </div>
+                  <p className="text-gray-600  text-center leading-relaxed">
+                    {group.description}
+                  </p>
+                </div>
+                <div className="text-yellow-500 group-hover:text-yellow-600 font-medium flex items-center text-lg transition-colors">
+                  Explore {group.title}
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
                 </div>
               </div>
-
-              <div className="p-6">
-                <ul className="space-y-2">
-                  {group.exams.map((exam) => (
-                    <li key={exam}>
-                      <Link
-                        href={`${group.path}/${exam.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-                        className="block p-3 bg-gray-50 rounded border border-gray-200 hover:border-blue-500 transition-colors"
-                      >
-                        <span className="font-medium text-gray-900">{exam}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-6">
-                  <Link
-                    href={group.path}
-                    className="inline-flex items-center justify-center w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    View All {group.title} Exams
-                  </Link>
-                </div>
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       </main>
@@ -118,4 +113,4 @@ const RecruitmentExams: React.FC = () => {
   );
 };
 
-export default RecruitmentExams; 
+export default RecruitmentExams;

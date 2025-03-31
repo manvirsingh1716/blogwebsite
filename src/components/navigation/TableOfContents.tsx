@@ -68,13 +68,13 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({
             <a
               key={heading.id}
               href={`#${heading.id}`}
-              className={`block text-sm hover:text-blue-500 transition-colors
+              className={`block text-sm  hover:text-blue-500 transition-colors
                 ${heading.level === 1 ? "font-medium" : ""}
                 ${heading.level > 1 ? `pl-${(heading.level - 1) * 4}` : ""}
                 ${
                   activeId === heading.id
                     ? "text-blue-500"
-                    : "text-gray-600 dark:text-gray-400"
+                    : "text-gray-600 dark:text-gray-500"
                 }`}
               onClick={(e) => {
                 e.preventDefault();

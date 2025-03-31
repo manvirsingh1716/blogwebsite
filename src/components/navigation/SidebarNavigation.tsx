@@ -104,18 +104,23 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
         <Link 
           href={`/${page.slug}`}
           className={`
-            block py-2.5 px-4 text-[15px] rounded-lg transition-colors duration-200
-            ${isCurrentPage ? 'text-blue-700 bg-blue-50' : 'text-gray-700 hover:bg-gray-50'}
-            ${level === 0 ? 'font-bold text-gray-900' : ''}
-            ${level === 1 ? 'font-semibold ml-4' : ''}
-            ${level === 2 ? 'font-normal ml-8' : ''}
-            ${level >= 3 ? 'font-normal ml-12' : ''}
+            group flex items-center py-2 px-4 text-[15px] rounded-md transition-all duration-200
+            ${isCurrentPage 
+              ? 'text-blue-600 bg-blue-50/70 font-medium' 
+              : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50'
+            }
+            ${level === 0 ? 'font-medium text-slate-800' : ''}
+            ${level === 1 ? 'font-normal' : ''}
+            ${level >= 2 ? 'ml-6 font-normal' : ''}
           `}
         >
+          {level >= 2 && (
+            <span className="mr-2 text-slate-400 text-xs">•</span>
+          )}
           {page.title}
         </Link>
         {hasChildren && page.children && (
-          <div className="mt-2 mb-3 space-y-1">
+          <div className="mt-0.5 mb-1">
             {page.children.map(child => renderNavItem(child, level + 1))}
           </div>
         )}
@@ -125,9 +130,9 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({
 
   if (loading) {
     return (
-      <div className="animate-pulse space-y-3 p-4">
+      <div className="animate-pulse space-y-2 p-4">
         {[1, 2, 3].map(i => (
-          <div key={i} className="h-6 bg-gray-200 rounded w-full"></div>
+          <div key={i} className="h-5 bg-slate-100 rounded-md w-full"></div>
         ))}
       </div>
     );

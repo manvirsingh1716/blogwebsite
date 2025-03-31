@@ -4,9 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { env } from "@/config/env";
-
-// Import the news image
-// import newsImage from "../../../public/images/news.svg";
+import ContactForm from '../common/ContactForm/ContactForm';
+import SocialMedia from '../navigation/socialmedia';
 
 interface CurrentAffairSection {
   id: number;
@@ -39,9 +38,20 @@ const CurrentAffairsLayout: React.FC<CurrentAffairsLayoutProps> = ({
   activeSection = "",
 }) => {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
   const [navSections, setNavSections] = useState<NavSection[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
+    'Daily Current Affairs': true,
+    'Monthly Current Affairs': false,
+    'Yearly Current Affairs': false
+  });
+
+  const toggleSection = (sectionTitle: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionTitle]: !prev[sectionTitle]
+    }));
+  };
 
   useEffect(() => {
     const fetchSections = async () => {
@@ -179,193 +189,86 @@ const CurrentAffairsLayout: React.FC<CurrentAffairsLayoutProps> = ({
     fetchSections();
   }, []);
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex">
-        {/* Sidebar for desktop */}
-        <div className="hidden md:flex md:flex-col md:w-64 md:fixed md:inset-y-0 bg-white border-r">
-          <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-            <div className="flex items-center flex-shrink-0 px-4">
-              <Link href="/current-affairs" className="text-xl font-bold text-gray-900">
-                Current Affairs
-              </Link>
-            </div>
-            <div className="mt-5 flex-1 flex flex-col">
-              <nav className="flex-1 px-2 space-y-8">
-                {loading ? (
-                  <div className="flex justify-center py-4">
-                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
-                  </div>
-                ) : (
-                  navSections.map((section, sectionIndex) => (
-                    <div key={sectionIndex}>
-                      <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-3">
-                        {section.title}
-                      </h3>
-                      <div className="space-y-1">
-                        {section.items.map((item, itemIndex) => (
-                          <Link
-                            key={itemIndex}
-                            href={item.path}
-                            className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md ${
-                              pathname === item.path || activeSection === item.path
-                                ? "bg-blue-50 text-blue-700"
-                                : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-                            }`}
-                          >
-                            <div className="mr-3 h-6 w-6 relative">
-                              {item.icon.image ? (
-                                <Image
-                                  src={item.icon.image}
-                                  alt=""
-                                  width={24}
-                                  height={24}
-                                  className="text-gray-500 group-hover:text-gray-600"
-                                />
-                              ) : (
-                                <div className="w-6 h-6 flex items-center justify-center">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
-                            {item.title}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </nav>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile menu button */}
-        <div className="md:hidden fixed top-0 left-0 right-0 z-10 bg-white border-b">
-          <div className="flex items-center justify-between h-16 px-4">
-            <Link href="/current-affairs" className="text-xl font-bold text-gray-900">
-              Current Affairs
-            </Link>
-            <button
-              onClick={toggleSidebar}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-900"
-            >
-              <svg
-                className="h-6 w-6"
-                stroke="currentColor"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        {isOpen && (
-          <div className="md:hidden fixed inset-0 z-40 flex">
-            <div
-              className="fixed inset-0 bg-gray-600 bg-opacity-75"
-              onClick={toggleSidebar}
-            ></div>
-            <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
-              <div className="absolute top-0 right-0 -mr-12 pt-2">
-                <button
-                  onClick={toggleSidebar}
-                  className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                >
-                  <span className="sr-only">Close sidebar</span>
-                  <svg
-                    className="h-6 w-6 text-white"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-5 flex flex-col md:flex-row gap-8">
+        <aside className="md:w-[320px] lg:w-[380px] flex-shrink-0">
+          <nav className="sticky top-8 bg-white border border-blue-100 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500" />
               </div>
-              <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-                <div className="flex-shrink-0 flex items-center px-4">
-                  <span className="text-xl font-bold text-gray-900">
-                    Current Affairs
-                  </span>
-                </div>
-                <nav className="mt-5 px-2 space-y-1">
-                  {loading ? (
-                    <div className="flex justify-center py-4">
-                      <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
-                    </div>
-                  ) : (
-                    navSections.flatMap((section) =>
-                      section.items.map((item, index) => (
+            ) : (
+              <section className="p-6 space-y-6">
+                {navSections.map((section, sectionIndex) => (
+                  <article key={sectionIndex} className="border-b border-gray-200 pb-4 last:border-b-0">
+                    <button
+                      onClick={() => toggleSection(section.title)}
+                      className="w-full flex items-center justify-between px-4 py-3 text-base font-semibold text-gray-900 hover:bg-gray-50 rounded-md transition-colors duration-200"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="text-blue-500">
+                          {section.title === "Daily Current Affairs" ? "📅" :
+                           section.title === "Monthly Current Affairs" ? "📆" : "📊"}
+                        </span>
+                        {section.title}
+                      </span>
+                      <svg
+                        className={`h-5 w-5 transform transition-transform duration-300 text-gray-500 ${expandedSections[section.title] ? 'rotate-180' : ''}`}
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    
+                    <div className={`mt-2 overflow-hidden transition-all duration-300 ${
+                      expandedSections[section.title] ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                    }`}>
+                      {section.items.map((item, itemIndex) => (
                         <Link
-                          key={index}
+                          key={itemIndex}
                           href={item.path}
-                          className={`group flex items-center px-2 py-2 text-base font-medium rounded-md ${
-                            pathname === item.path || activeSection === item.path
+                          className={`group flex items-center px-6 py-2.5 text-[15px] font-medium rounded-md transition-all duration-200 ${
+                            pathname === item.path
                               ? "bg-blue-50 text-blue-700"
                               : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
                           }`}
-                          onClick={toggleSidebar}
                         >
-                          <div className="mr-4 h-6 w-6 relative">
-                            {item.icon.image ? (
-                              <Image
-                                src={item.icon.image}
-                                alt=""
-                                width={24}
-                                height={24}
-                                className="text-gray-500 group-hover:text-gray-600"
-                              />
-                            ) : (
-                              <div className="w-6 h-6 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                                </svg>
-                              </div>
-                            )}
-                          </div>
-                          {item.title}
+                          <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 mr-3 ${
+                            pathname === item.path ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'
+                          }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <span className="truncate">{item.title}</span>
                         </Link>
-                      ))
-                    )
-                  )}
-                </nav>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </section>
+            )}
+            
+            <footer className="border-t border-gray-200 bg-gray-50 p-6">
+              <ContactForm />
+              <div className="mt-6">
+                <h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                  <span className="text-blue-500">🌐</span>
+                  <span>Follow Us</span>
+                </h3>
+                <SocialMedia />
               </div>
-            </div>
-            <div className="flex-shrink-0 w-14"></div>
-          </div>
-        )}
+            </footer>
+          </nav>
+        </aside>
 
-        {/* Main content */}
-        <div className="md:pl-64 flex flex-col flex-1">
-          <main className="flex-1">
-            <div className="py-6">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                {children}
-              </div>
-            </div>
-          </main>
-        </div>
-      </div>
+        <main className="flex-1">
+          <article className="bg-gray-50 border border-blue-100 rounded-xl shadow-lg p-6 md:p-8 transition-all duration-300 hover:shadow-xl">
+            {children}
+          </article>
+        </main>
+      </section>
     </div>
   );
 };

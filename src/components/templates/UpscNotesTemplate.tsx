@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/navigation/Breadcrumb";
 import ContactForm from "@/components/ui/ContactForm";
 import SidebarNavigation from "@/components/navigation/SidebarNavigation";
+import SocialMedia from "@/components/navigation/socialmedia";
 import { metadata } from "@/app/(use-navbar)/layout";
 // import { UpscNotesTemplateProps } from "./types";
 
@@ -33,7 +34,6 @@ interface UpscNotesTemplateProps {
 export const UpscNotesTemplate: React.FC<UpscNotesTemplateProps> = ({
   page,
 }) => {
-  // Debug log for incoming data
   console.log("UpscNotesTemplate received page:", {
     id: page.template.id,
     title: page.title,
@@ -60,38 +60,55 @@ export const UpscNotesTemplate: React.FC<UpscNotesTemplateProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Breadcrumb />
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mt-8">
-          {/* Left Sidebar - Increased width */}
-          <aside className="md:col-span-5 lg:col-span-4">
-            <div className="sticky top-24 space-y-6">
-              {/* Navigation Section */}
-              <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white rounded-xl">
-                <CardContent className="p-6">
-                  <h2 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2 border-blue-200">
-                    Navigation
-                  </h2>
-                  <SidebarNavigation 
-                    currentPageId={page.id.toString()} 
-                    basePath={page.slug.split('/')[0]} // Use the first segment of the page slug
-                    hideParent={true}
-                  />
-                </CardContent>
-              </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+          {/* Left Sidebar with increased width */}
+          <aside className="lg:col-span-5 xl:col-span-4 order-2 lg:order-1">
+            {/* Sticky Container */}
+            <div className="relative">
+              <div className="sticky top-8 space-y-6">
+                {/* Navigation Section */}
+                <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2 flex items-center gap-2">
+                    <span className="text-blue-500">📚</span>
+                    <span>Complete UPSC Notes</span>
+                  </h3>
+                  <div className="pr-2 max-h-[60vh] overflow-y-auto">
+                    <SidebarNavigation 
+                      currentPageId={page.id.toString()} 
+                      basePath={page.slug.split('/')[0]}
+                      hideParent={true}
+                    />
+                  </div>
+                </div>
 
-              {/* Contact Form */}
-              <Card className="border border-blue-100 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white rounded-xl">
-                <CardContent className="p-6">
+                {/* Contact Form */}
+                <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2 flex items-center gap-2">
+                    <span className="text-blue-500">📝</span>
+                    <span>Contact Us</span>
+                  </h3>
                   <ContactForm />
-                </CardContent>
-              </Card>
+                </div>
+
+                {/* Social Media Section */}
+                <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2 flex items-center gap-2">
+                    <span className="text-blue-500">🌐</span>
+                    <span>Connect With Us</span>
+                  </h3>
+                  <div className="py-2">
+                    <SocialMedia />
+                  </div>
+                </div>
+              </div>
             </div>
           </aside>
 
-          {/* Main Content - Adjusted width */}
-          <main className="md:col-span-8 lg:col-span-8">
+          {/* Main Content with reduced width */}
+          <main className="lg:col-span-7 xl:col-span-8 order-1 lg:order-2">
             <article className="bg-white border border-blue-100 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-8">
-              <h1 className="text-4xl sm:text-5xl font-extrabold mb-8 text-center">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-500 border-b-4 border-blue-400 pb-2">
+              <h1 className="text-4xl sm:text-4xl font-bold mb-8 text-center">
+                <span className="text-indigo-900 border-b-2 border-yellow-400 pb-2">
                   {title}
                 </span>
               </h1>
