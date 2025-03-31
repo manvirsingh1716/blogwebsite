@@ -2,6 +2,7 @@ import React from 'react';
 import { BaseTemplateProps, JsonContent, JsonMetadata } from './types';
 import { Hero } from '../ui/Hero';
 import { StudyMaterialCard } from '../ui/StudyMaterialCard';
+import SearchBar from '@/components/Navbar/SearchBar';
 
 interface StudyMaterialContent extends JsonContent {
   title: string;
@@ -53,6 +54,11 @@ export const StudyMaterialTemplate: React.FC<BaseTemplateProps> = ({ page }) => 
 
           {/* Sidebar */}
           <aside className="lg:col-span-3 space-y-8">
+            {/* Search Bar */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <SearchBar />
+            </div>
+
             {/* Info Card */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-xl font-semibold mb-4">Material Info</h3>

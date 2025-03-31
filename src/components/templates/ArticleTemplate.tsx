@@ -3,7 +3,10 @@ import { BaseTemplateProps } from "./types";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/navigation/Breadcrumb";
 import { TableOfContents } from "@/components/navigation/TableOfContents";
+import SearchBar from "@/components/Navbar/SearchBar";
 import Image from "next/image";
+import { ChevronRight, X } from "lucide-react";
+import SocialMedia from "@/components/navigation/socialmedia";
 
 interface ArticleContent {
   content: string;
@@ -30,8 +33,62 @@ export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
   const displayImage = articleContent.image || coverImage;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white relative">
+      {/* TOC Container with checkbox hack for toggle */}
+      <input type="checkbox" id="toc-toggle" className="hidden peer" />
+      
+      {/* TOC Button */}
+      <label
+        htmlFor="toc-toggle"
+        className="fixed left-0 top-1/2 -translate-y-1/2 z-[100] cursor-pointer 
+        flex items-center bg-white border border-gray-200 rounded-r-lg 
+        px-2 py-3 shadow-md hover:bg-gray-50 transition-all duration-300 
+        peer-checked:translate-x-[280px] hover:border-gray-300 group"
+      >
+        <div className="flex flex-col items-center gap-1">
+          <span className="text-black text-sm font-medium tracking-wide rotate-180 
+          [writing-mode:vertical-lr] transform transition-transform duration-300">
+            TOC
+          </span>
+          <ChevronRight className="w-4 h-4 text-black transition-all duration-300 
+          group-hover:translate-x-0.5" />
+        </div>
+      </label>
+
+      {/* TOC Sidebar */}
+      <div className="fixed left-0 top-0 h-full w-[280px] bg-white/95 
+      backdrop-blur-sm shadow-xl -translate-x-full peer-checked:translate-x-0 
+      transition-all duration-300 ease-in-out z-[90] border-r-2 border-gray-200">
+        {/* Close Button - Moved outside scrollable area */}
+        <label
+          htmlFor="toc-toggle"
+          className="absolute top-4 right-4 p-2 cursor-pointer rounded-full
+          hover:bg-gray-100 transition-colors duration-200 z-[100]
+          bg-white shadow-md border border-gray-200"
+        >
+          <X className="w-5 h-5 text-gray-600 hover:text-gray-900" />
+        </label>
+
+        {/* Left TOC Sidebar */}
+        <div className="p-6 h-full mt-[50px] pb-24 overflow-y-auto">
+          <div className="bg-gray-50 rounded-xl p-4 border-2 border-gray-200 
+          shadow-inner transition-all duration-300 hover:border-gray-300
+          sticky top-[100px]">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 
+            border-gray-300 pb-2 flex items-center gap-2">
+              <span className="text-gray-500">📑</span>
+              <span>Table of Content</span>
+            </h3>
+            <div className="pr-2 space-y-1 max-h-[70vh] overflow-y-auto">
+              <TableOfContents content={mainContent} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content with padding adjustment */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 
+      transition-all duration-300 md:peer-checked:pl-[280px]">
         <Breadcrumb />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -115,34 +172,57 @@ export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
           </main>
 
           {/* Right Sidebar */}
-          <aside className="lg:col-span-4 xl:col-span-3 space-y-8">
-            {/* Table of Contents */}
-            <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 sticky top-8 transition-all duration-300 hover:shadow-xl">
-              <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2">
-                📑 Table of Contents
-              </h3>
-              <TableOfContents content={mainContent} />
+          <aside className="lg:col-span-4 xl:col-span-3">
+            {/* Search Bar - Always visible at top */}
+            <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl mb-6">
+              <SearchBar />
             </div>
 
-            {/* Tags */}
-            {tags && tags.length > 0 && (
-              <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2">
-                  🏷️ Tags
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors duration-200 cursor-pointer"
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
+            {/* Sticky Container */}
+            <div className="relative">
+              {/* TOC Section */}
+              <div className="sticky top-8 space-y-6">
+                <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2">
+                    📑 Table of Contents
+                  </h3>
+                  <div className="pr-2">
+                    <TableOfContents content={mainContent} />
+                  </div>
                 </div>
+
+                {/* Social Media Section - Fixed below TOC */}
+                <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6">
+                  <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2 flex items-center gap-2">
+                    <span className="text-blue-500">🌐</span>
+                    <span>Connect With Us</span>
+                  </h3>
+                  <div className="py-2 h-9">
+                    <SocialMedia />
+                  </div>
+                </div>
+
+                {/* Tags Section - Fixed below Social Media */}
+                {tags && tags.length > 0 && (
+                  <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl">
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2">
+                      🏷️ Tags
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {tags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          variant="secondary"
+                          className="bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors duration-200 cursor-pointer"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </aside>
         </div>
       </div>
