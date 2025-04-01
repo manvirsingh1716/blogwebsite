@@ -103,9 +103,7 @@ function NestedNavigation({
                           <div key={child.slug} className="mb-2">
                             <Link
                               href={`/${child.slug}`}
-                              className={` px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 text-sm font-medium flex items-center justify-between ${
-                                openDropdown === child.slug ? 'bg-gray-50 text-blue-600' : ''
-                              }`}
+                              className="flex px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 text-sm font-medium items-center justify-between"
                               onMouseEnter={() => setOpenDropdown(child.slug)}
                             >
                               <span>{child.title}</span>
@@ -154,7 +152,7 @@ function NestedNavigation({
                                                 <Link
                                                   key={greatGrandChild.slug}
                                                   href={`/${greatGrandChild.slug}`}
-                                                  className="block px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 flex items-center"
+                                                  className="flex px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 items-center"
                                                 >
                                                   <svg 
                                                     className="w-3 h-3 mr-2 fill-current"
@@ -231,9 +229,9 @@ export default function Navbar({ navigation }: NavbarProps) {
           <div className="container mx-auto px-6 flex justify-between items-center h-12">
             <div className="mt-1.75">
               <Link href="/shop" passHref>
-                <span className="text-[13px] font-bold tracking-wide text-white hover:text-white/90 transition-colors 
+                <span className="text-[13px] font-bold tracking-wide text-white hover:text-white/90
                                bg-gradient-to-r from-orange-700 to-orange-600 hover:from-orange-600 hover:to-orange-500 
-                               px-4 py-1.5 rounded-full shadow-sm hover:shadow-md transition-all duration-300">
+                               px-4 py-1.5 rounded-full shadow-sm hover:shadow-md transition-all">
                   Shop Now
                 </span>
               </Link>
@@ -322,7 +320,7 @@ export default function Navbar({ navigation }: NavbarProps) {
                 <button
                   onClick={() => setIsOpen(!isOpen)}
                   className="inline-flex items-center justify-center p-2 rounded-full text-gray-700 
-                         hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition-all duration-300"
+                         hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition-colors"
                 >
                   <span className="sr-only">Open main menu</span>
                   {isOpen ? (
