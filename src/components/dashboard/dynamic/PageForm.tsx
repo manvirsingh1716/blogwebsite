@@ -2,9 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Page } from '@prisma/client';
-import { ArticleForm } from './forms/ArticleForm';
-import { GeneralStudiesForm } from './forms/GeneralStudiesForm';
-import { UpscNotesForm } from './forms/UPSCNotesForm';
+import { ArticleForm, GeneralStudiesForm, UpscNotesForm } from '../forms';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { env } from '@/config/env';
