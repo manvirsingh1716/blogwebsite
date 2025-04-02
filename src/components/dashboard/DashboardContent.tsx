@@ -8,15 +8,11 @@ import { PageForm as DefaultPageForm } from './dynamic/PageForm';
 
 // Static imports
 import { PageForm as CurrentAffairPageForm } from './static/current-affair/PageForm';
-import { PageList as CurrentAffairPageList } from './static/current-affair/PageList';
-import { PageForm as ExamForumPageForm } from './static/exam-forum/PageForm';
 
-import { PageForm as FreeStudyMaterialPageForm } from './static/free-study-material/PageForm';
 
 
 // Define a more generic type for the PageForm component
 type AnyPageForm = React.ComponentType<any>;
-type AnyPageList = React.ComponentType<any>;
 
 export function DashboardContent() {
   const pathname = usePathname();
@@ -26,10 +22,6 @@ export function DashboardContent() {
     // Determine which components to use based on the current path
     if (pathname?.includes('/current-affair')) {
       setPageForm(() => CurrentAffairPageForm);
-    } else if (pathname?.includes('/exam-forum')) {
-      setPageForm(() => ExamForumPageForm);
-    } else if (pathname?.includes('/free-study-material')) {
-      setPageForm(() => FreeStudyMaterialPageForm);
     } else {
       // Default components
       setPageForm(() => DefaultPageForm);

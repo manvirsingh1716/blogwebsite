@@ -97,41 +97,7 @@ export default function Dashboard() {
                   </div>
                 </div>
               </button>
-              {/* Add exam-forum button*/}
-              <button
-                onClick={() => router.push('/dashboard/exam-forum')}
-                className="group relative overflow-hidden rounded-xl bg-slate-800 shadow-lg transition-all hover:bg-slate-700"
-              >
-                <div className="relative flex items-center gap-4 px-8 py-5">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/10">
-                    <FaPlus className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className={`${plusJakarta.className} text-[1.125rem] font-semibold tracking-wide text-white mb-0.5`}>
-                      Add Exam Forum
-                    </h3>
-                    <p className="text-[0.875rem] leading-5 text-slate-300">Create new content</p>
-                  </div>
-                </div>
-              </button>
-              {/* Add free-study-material button*/}
-              <button
-                onClick={() => router.push('/dashboard/free-study-material')}
-                className="group relative overflow-hidden rounded-xl bg-slate-800 shadow-lg transition-all hover:bg-slate-700"
-              >
-                <div className="relative flex items-center gap-4 px-8 py-5">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white/10">
-                    <FaPlus className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <h3 className={`${plusJakarta.className} text-[1.125rem] font-semibold tracking-wide text-white mb-0.5`}>
-                      Add Free Study Material
-                    </h3>
-                    <p className="text-[0.875rem] leading-5 text-slate-300">Create new content</p>
-                  </div>
-                </div>
-              </button>
-
+              {/* Edit button*/}
               <button
                 onClick={() => router.push('/dashboard/edit')}
                 className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50"

@@ -4,7 +4,7 @@ import type { BaseTemplateProps } from "@/components/templates/types";
 import { UpscNotesTemplate } from "@/components/templates/UpscNotesTemplate";
 import { ArticleTemplate } from "@/components/templates/ArticleTemplate";
 import { GeneralStudiesTemplate } from "@/components/templates/GeneralStudiesTemplate";
-
+import { CurrentAffairTemplate } from "@/components/templates/CurrentAffairTemplate";
 import { env } from "@/config/env";
 
 // Map template IDs to components
@@ -13,6 +13,7 @@ const TEMPLATE_MAP: Record<string, any> = {
   "article": ArticleTemplate,
   "general-studies": GeneralStudiesTemplate,
   "study-material": ArticleTemplate, // Using ArticleTemplate as base for study material
+  "current-affair": CurrentAffairTemplate,
 };
 
 async function getPage(
