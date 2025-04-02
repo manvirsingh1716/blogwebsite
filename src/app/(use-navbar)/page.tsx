@@ -4,18 +4,19 @@ import CurrentAffairs from "@/components/CurrentAffairs/CurrentAffairs";
 import CoachingInfo from "@/components/CoachingInfo/CoachingInfo";
 import FAQ from "@/components/common/FAQ/FAQ";
 import ContactMap from "@/components/common/Contact/ContactMap";
+import Reason99notes from "@/components/CoachingInfo/Reason99notes";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section with Contact Form */}
-      <section className="container mx-auto px-4 ">
+      <section className="container mx-auto px-4 md:px-24 lg:px-32">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Left Column - Text Content */}
           <div className="space-y-8">
-            <div className="space-y-2">
-              <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
-                <span className="text-2xl md:text-3xl font-light block mb-1 tracking-wider">
+            <div className="space-y-2 mt-10 md:mt-0">
+              <h1 className="text-4xl md:text-5xl  text-gray-900 tracking-tight leading-tight">
+                <span className="text-2xl md:text-3xl font-bold block mb-1 tracking-wider">
                   The
                 </span>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-700">
@@ -42,7 +43,7 @@ export default function Home() {
           </div>
 
           {/* Right Column - Contact Form */}
-          <div className="mt-20">
+          <div className="mt-20 mb-5">
             <ContactForm />
           </div>
         </div>
@@ -53,6 +54,7 @@ export default function Home() {
       <CurrentAffairs />
       <CoachingInfo />
       <FAQ />
+      <Reason99notes />
       <ContactMap />
     </div>
   );

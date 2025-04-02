@@ -28,7 +28,7 @@ export const Breadcrumb = () => {
           <React.Fragment key={path}>
             <ChevronRightIcon className="w-4 h-4" />
             {isLast ? (
-              <span className="font-medium text-gray-900 dark:text-gray-200">
+              <span className="font-medium text-gray-900 dark:text-gray-400">
                 {label}
               </span>
             ) : (
