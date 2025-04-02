@@ -1,6 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { Breadcrumb } from "@/components/navigation/Breadcrumb";
 import CurrentAffairsLayout from "@/components/CurrentAffairs/CurrentAffairsLayout";
 import { sectionConfig } from "@/config/currentAffairs";
 import { env } from "@/config/env";
@@ -156,18 +157,7 @@ const CurrentAffairsSectionPage = async ({
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-50 via-white to-blue-50 border-b">
         <div className="container mx-auto px-4 sm:px-6 py-8">
-          {/* Breadcrumb */}
-          <nav className="flex items-center text-sm mb-6">
-            <Link href="/" className="text-gray-600 hover:text-blue-600">Home</Link>
-            <svg className="mx-2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
-            </svg>
-            <Link href="/current-affairs" className="text-gray-600 hover:text-blue-600">Current Affairs</Link>
-            <svg className="mx-2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
-            </svg>
-            <span className="text-gray-900 font-medium">{category.replace(/-/g, " ")}</span>
-          </nav>
+          <Breadcrumb />
 
           <div className="max-w-4xl">
             <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">
