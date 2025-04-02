@@ -1,7 +1,7 @@
 import { env } from '@/config/env';
-import prisma from './db'
+// import prisma from './db'
 import { NavItem } from '@/types/navigation';
-import { staticNavigationItems } from '@/config/staticNavigation';
+// import { staticNavigationItems } from '@/config/staticNavigation';
 
 // Interface for current affairs section from the database
 interface CurrentAffairSection {
@@ -68,12 +68,12 @@ export async function getNavigationTree(): Promise<NavItem[]> {
   // Merge static navigation items with the dynamic ones
   // First, filter out any potential conflicts (items with the same slug)
   const dynamicTopLevelSlugs = tree.map(item => item.slug);
-  const filteredStaticItems = staticNavigationItems.filter(
-    item => !dynamicTopLevelSlugs.includes(item.slug) && item.slug !== 'current-affairs' // Exclude static current-affairs
-  );
+  // const filteredStaticItems = staticNavigationItems.filter(
+  //   item => !dynamicTopLevelSlugs.includes(item.slug) && item.slug !== 'current-affairs' // Exclude static current-affairs
+  // );
 
   // Combine the trees with our dynamic current affairs
-  return [...tree, currentAffairsNavItem, ...filteredStaticItems];
+  return [...tree, currentAffairsNavItem];
 }
 
 // Function to build the current affairs navigation structure from the database
@@ -190,11 +190,6 @@ async function buildCurrentAffairsNavigation(): Promise<NavItem> {
     }
   } catch (error) {
     console.error('Error fetching current affairs sections:', error);
-    // In case of error, fall back to the static navigation structure for current affairs
-    const staticCurrentAffairs = staticNavigationItems.find(item => item.slug === 'current-affairs');
-    if (staticCurrentAffairs) {
-      return staticCurrentAffairs;
-    }
   }
 
   return currentAffairsNav;

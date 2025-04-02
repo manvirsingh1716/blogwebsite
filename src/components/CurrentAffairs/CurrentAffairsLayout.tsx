@@ -192,8 +192,18 @@ const CurrentAffairsLayout: React.FC<CurrentAffairsLayoutProps> = ({
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mt-5 flex flex-col md:flex-row gap-8">
-        <aside className="md:w-[320px] lg:w-[380px] flex-shrink-0">
-          <nav className="sticky top-8 bg-white border border-blue-100 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
+        {/* On mobile*/}
+        <div className="flex flex-col md:hidden">
+          <main className="flex-1">
+            <article className="bg-gray-50 border border-blue-100 rounded-xl shadow-lg p-6 md:p-8 transition-all duration-300 hover:shadow-xl">
+              {children}
+            </article>
+          </main>
+        </div>
+
+        {/* Sidebar */}
+        <aside className="w-full md:w-[320px] lg:w-[380px] flex-shrink-0">
+          <nav className="bg-white border border-blue-100 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl md:sticky md:top-8">
             {loading ? (
               <div className="flex justify-center py-8">
                 <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500" />
@@ -263,11 +273,14 @@ const CurrentAffairsLayout: React.FC<CurrentAffairsLayoutProps> = ({
           </nav>
         </aside>
 
-        <main className="flex-1">
-          <article className="bg-gray-50 border border-blue-100 rounded-xl shadow-lg p-6 md:p-8 transition-all duration-300 hover:shadow-xl">
-            {children}
-          </article>
-        </main>
+        {/* On tablet/desktop: Display main content second */}
+        <div className="hidden md:flex flex-1">
+          <main className="w-full">
+            <article className="bg-gray-50 border border-blue-100 rounded-xl shadow-lg p-6 md:p-8 transition-all duration-300 hover:shadow-xl">
+              {children}
+            </article>
+          </main>
+        </div>
       </section>
     </div>
   );

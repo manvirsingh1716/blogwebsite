@@ -9,11 +9,12 @@ import { ChevronRight, X } from "lucide-react";
 import SocialMedia from "@/components/navigation/socialmedia";
 import ContactForm from "@/components/common/ContactForm/ContactForm";
 import DraggableTocButton from "@/components/navigation/DraggableTocButton";
+import { Comments } from "@/components/ui/comments";
 
-interface ArticleContent {
-  content: string;
-  image?: string;
-}
+// interface ArticleContent {
+//   content: string;
+//   image?: string;
+// }
 
 export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
   const { title, content, metadata } = page;
@@ -185,6 +186,7 @@ export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
                 dangerouslySetInnerHTML={{ __html: mainContent }}
               />
             </div>
+            <Comments />
           </main>
 
           {/* Right Sidebar */}

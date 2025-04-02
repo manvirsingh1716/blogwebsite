@@ -5,8 +5,19 @@ import CoachingInfo from "@/components/CoachingInfo/CoachingInfo";
 import FAQ from "@/components/common/FAQ/FAQ";
 import ContactMap from "@/components/common/Contact/ContactMap";
 import Reason99notes from "@/components/CoachingInfo/Reason99notes";
+import Slider from "@/components/About/Slider";
 
 export default function Home() {
+  const coreMemberImages = [
+    { src: "/assets/images/sample_image.jpg", alt: "Core Member 1", info: "Information about Core Member 1" },
+    { src: "/assets/images/sample_image2.jpg", alt: "Core Member 2", info: "Information about Core Member 2" },
+    { src: "/assets/images/sample_image.jpg", alt: "Core Member 3", info: "Information about Core Member 3" },
+    { src: "/assets/images/sample_image2.jpg", alt: "Core Member 4", info: "Information about Core Member 4" },
+    { src: "/assets/images/sample_image.jpg", alt: "Core Member 5", info: "Information about Core Member 5" },
+    { src: "/assets/images/sample_image2.jpg", alt: "Core Member 6", info: "Information about Core Member 6" },
+    { src: "/assets/images/sample_image.jpg", alt: "Core Member 7", info: "Information about Core Member 7" },
+    { src: "/assets/images/sample_image2.jpg", alt: "Core Member 8", info: "Information about Core Member 8" },
+  ];
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section with Contact Form */}
@@ -51,6 +62,9 @@ export default function Home() {
 
       {/* Other Sections */}
       <StudyMaterials />
+      <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300">
+        <Slider images={coreMemberImages} />
+      </div>
       <CurrentAffairs />
       <CoachingInfo />
       <FAQ />

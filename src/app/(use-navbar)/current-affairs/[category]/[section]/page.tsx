@@ -4,6 +4,8 @@ import { sectionConfig } from "@/config/currentAffairs";
 import { env } from "@/config/env";
 import CurrentAffairsLayout from "@/components/CurrentAffairs/CurrentAffairsLayout";
 import Head from "next/head";
+import { TableOfContents } from "@/components/navigation/TableOfContents";
+import { ChevronRight, X } from "lucide-react";
 
 // Define types for the data
 interface CurrentAffairArticle {
@@ -50,7 +52,8 @@ const CurrentAffairArticlePage = async ({
   const article = await fetchArticle(category, articleSlug);
 
   return (
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+      <div className="container max-w-7xl mx-auto px-4 py-8">
         <Head>
           <title>{article?.title || "Article"} | 99Notes</title>
           <meta
@@ -58,102 +61,193 @@ const CurrentAffairArticlePage = async ({
             content={article?.content?.substring(0, 160) || "Current affairs article"}
           />
         </Head>
+
+        {/* TOC Container with checkbox hack for toggle */}
+        <input type="checkbox" id="toc-toggle" className="hidden peer" />
+        
+        {/* TOC Button - Enhanced styling */}
+        <label
+          htmlFor="toc-toggle"
+          className="fixed left-0 top-1/2 -translate-y-1/2 z-[100] cursor-pointer 
+          flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 
+          rounded-r-xl px-3 py-4 shadow-lg hover:bg-white/95 transition-all duration-300 
+          peer-checked:translate-x-[320px] hover:shadow-xl group"
+        >
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-black text-sm font-medium tracking-wide rotate-180 
+            [writing-mode:vertical-lr] transform transition-transform duration-300">
+              TOC
+            </span>
+            <ChevronRight className="w-4 h-4 text-black transition-all duration-300 
+            group-hover:translate-x-0.5" />
+          </div>
+        </label>
+
+        {/* TOC Sidebar - Enhanced styling */}
+        <div className="fixed left-0 top-0 h-full w-[320px] bg-white/90 
+        backdrop-blur-md shadow-2xl -translate-x-full peer-checked:translate-x-0 
+        transition-all duration-300 ease-in-out z-[90] border-r border-gray-200">
+          {/* Close Button - Moved outside scrollable area */}
+          <label
+            htmlFor="toc-toggle"
+            className="absolute top-4 right-4 p-2 cursor-pointer rounded-full
+            hover:bg-gray-100 transition-colors duration-200 z-[100]
+            bg-white shadow-md border border-gray-200"
+          >
+            <X className="w-5 h-5 text-gray-600 hover:text-gray-900" />
+          </label>
+
+          {/* Left TOC Sidebar Content - Enhanced */}
+          <div className="p-6 h-full mt-[50px] pb-24 overflow-y-auto">
+            <div className="bg-gradient-to-br from-blue-50/50 to-gray-50/50 rounded-2xl 
+            p-5 border border-blue-100/50 shadow-inner transition-all duration-300 
+            hover:border-blue-200 sticky top-[100px]">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b-2 
+              border-gray-300 pb-2 flex items-center gap-2">
+                <span className="text-gray-500">📑</span>
+                <span>Table of Content</span>
+              </h3>
+              <div className="pr-2 space-y-1 max-h-[70vh] overflow-y-auto">
+                {article?.content && <TableOfContents content={article.content} />}
+              </div>
+            </div>
+          </div>
+        </div>
         
         {article ? (
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-6">
-              <Link
-                href={`/current-affairs/${category}`}
-                className="text-blue-600 hover:underline flex items-center gap-1"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Back to {category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, " ")}
-              </Link>
-            </div>
-            
-            <article className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="p-6 md:p-8">
-                <header className="mb-8 border-b pb-6">
-                  <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">{article.title}</h1>
-                  <div className="flex flex-wrap items-center text-sm text-gray-600 gap-4">
-                    {article.author && (
-                      <div className="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        <span>{article.author}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Main content column */}
+            <div className="lg:col-span-8">
+              <div className="max-w-3xl">
+                {/* Back button - Enhanced */}
+                <div className="mb-8">
+                  <Link
+                    href={`/current-affairs/${category}`}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg
+                    bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700
+                    hover:bg-white hover:border-gray-300 transition duration-200
+                    shadow-sm hover:shadow-md"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to {category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, " ")}
+                  </Link>
+                </div>
+
+                {/* Article Card - Enhanced */}
+                <article className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl 
+                overflow-hidden border border-gray-200 transition-all duration-300
+                hover:shadow-2xl">
+                  <div className="p-8 md:p-10">
+                    {/* Article Header - Enhanced */}
+                    <header className="mb-10 border-b border-gray-200/80 pb-8">
+                      <h1 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900
+                      leading-tight gradient-text">{article.title}</h1>
+                      
+                      {/* Metadata - Enhanced */}
+                      <div className="flex flex-wrap items-center gap-4 text-sm">
+                        {article.author && (
+                          <div className="flex items-center gap-2 bg-blue-50/50 
+                          px-3 py-1.5 rounded-full border border-blue-100/50
+                          hover:bg-blue-50 transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <span>{article.author}</span>
+                          </div>
+                        )}
+                        {article.createdAt && (
+                          <div className="flex items-center gap-2 bg-blue-50/50 
+                          px-3 py-1.5 rounded-full border border-blue-100/50
+                          hover:bg-blue-50 transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <time dateTime={article.createdAt}>
+                              {new Date(article.createdAt).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })}
+                            </time>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-2 bg-blue-50/50 
+                        px-3 py-1.5 rounded-full border border-blue-100/50
+                        hover:bg-blue-50 transition-colors duration-200">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                          </svg>
+                          <span>{category.replace(/-/g, " ")}</span>
+                        </div>
                       </div>
-                    )}
-                    {article.createdAt && (
-                      <div className="flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <time dateTime={article.createdAt}>
-                          {new Date(article.createdAt).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
-                        </time>
+                    </header>
+
+                    {/* Article Content - Enhanced */}
+                    <div className="prose prose-lg max-w-none prose-headings:text-gray-900
+                    prose-p:text-gray-700 prose-a:text-blue-600 prose-a:no-underline
+                    hover:prose-a:underline prose-img:rounded-xl prose-strong:text-gray-900
+                    prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50/50
+                    prose-blockquote:rounded-r-lg prose-blockquote:py-2">
+                      {article.content ? (
+                        <>
+                          <div dangerouslySetInnerHTML={{ __html: article.content }} />
+                          {/* Debug info - remove in production */}
+                          <div className="mt-8 p-4 bg-gray-100 rounded text-sm">
+                            <h4 className="font-bold mb-2">Debug Info (remove in production):</h4>
+                            <p>Content length: {article.content.length} characters</p>
+                            <p>Content type: {typeof article.content}</p>
+                            <p>Raw content preview: {article.content.substring(0, 100)}...</p>
+                          </div>
+                        </>
+                      ) : (
+                        <p>No content available for this article.</p>
+                      )}
+                    </div>
+
+                    {/* Related Topics - Enhanced */}
+                    <div className="mt-12 pt-6 border-t border-gray-200/80">
+                      <h3 className="font-semibold text-xl mb-4 text-gray-900">Related Topics</h3>
+                      <div className="flex flex-wrap gap-3">
+                        <span className="bg-gradient-to-r from-blue-500/10 to-blue-600/10 
+                        text-blue-800 px-4 py-2 rounded-full text-sm font-medium
+                        border border-blue-100 hover:shadow-md transition-all duration-200">
+                          Current Affairs
+                        </span>
+                        <span className="bg-gradient-to-r from-blue-500/10 to-blue-600/10 
+                        text-blue-800 px-4 py-2 rounded-full text-sm font-medium
+                        border border-blue-100 hover:shadow-md transition-all duration-200">
+                          {category.replace(/-/g, " ")}
+                        </span>
                       </div>
-                    )}
-                    <div className="flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
-                      </svg>
-                      <span>{category.replace(/-/g, " ")}</span>
                     </div>
                   </div>
-                </header>
-                
-                <div className="prose prose-lg max-w-none">
-                  {article.content ? (
-                    <>
-                      <div dangerouslySetInnerHTML={{ __html: article.content }} />
-                      {/* Debug info - remove in production */}
-                      <div className="mt-8 p-4 bg-gray-100 rounded text-sm">
-                        <h4 className="font-bold mb-2">Debug Info (remove in production):</h4>
-                        <p>Content length: {article.content.length} characters</p>
-                        <p>Content type: {typeof article.content}</p>
-                        <p>Raw content preview: {article.content.substring(0, 100)}...</p>
-                      </div>
-                    </>
-                  ) : (
-                    <p>No content available for this article.</p>
-                  )}
-                </div>
-                
-                <div className="mt-10 pt-6 border-t">
-                  <h3 className="font-semibold text-lg mb-4">Related Topics</h3>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                      Current Affairs
-                    </span>
-                    <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                      {category.replace(/-/g, " ")}
-                    </span>
+                </article>
+              </div>
+            </div>
+
+            {/* Right Sidebar - Enhanced */}
+            <div className="lg:col-span-4 hidden lg:block mt-5">
+              <div className="sticky top-24 bg-gradient-to-br from-gray-50 to-white 
+              rounded-2xl shadow-lg border border-gray-200/80 overflow-hidden">
+                <div className="p-6">
+                  <h2 className="text-xl font-semibold mb-6 text-gray-900 flex items-center 
+                  gap-2 pb-4 border-b border-gray-200/80">
+                    <span className="text-blue-600">📑</span>
+                    <span className="gradient-text">Table of Contents</span>
+                  </h2>
+                  <div className="space-y-1.5 max-h-[70vh] overflow-y-auto pr-2
+                  scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+                    {article?.content && <TableOfContents content={article.content} />}
                   </div>
                 </div>
               </div>
-            </article>
-            
-            <div className="mt-8 flex justify-between">
-              <Link
-                href={`/current-affairs/${category}`}
-                className="text-blue-600 hover:underline flex items-center gap-1"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-                Back to all articles
-              </Link>
             </div>
           </div>
         ) : (
-          <div className="text-center py-10 bg-gray-50 rounded-lg">
+          <div className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl
+          shadow-xl max-w-2xl mx-auto border border-gray-200">
             <h1 className="text-2xl font-bold mb-4">Article Not Found</h1>
             <p className="text-gray-500 mb-6">
               The article you're looking for could not be found.
@@ -167,6 +261,7 @@ const CurrentAffairArticlePage = async ({
           </div>
         )}
       </div>
+    </div>
   );
 };
 
