@@ -7,20 +7,19 @@ import ContactMap from '@/components/ui/ContactMap';
 
 const CurrentAffairsIndex = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-
-      <div className="container mx-auto px-4 py-12 max-w-5xl"> {/* reduced from max-w-6xl */}
+    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-5xl">
         {/* Main Categories */}
         {navigationSections?.map((section, index) => (
-          <div key={index} className="mb-16">
-            <div className="flex flex-col items-center mb-10">
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">{section.title}</h2>
-              <div className="w-24 h-1 bg-yellow-400 rounded-full"></div>
+          <div key={index} className="mb-12 sm:mb-16">
+            <div className="flex flex-col items-center mb-8 sm:mb-10">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">{section.title}</h2>
+              <div className="w-20 sm:w-24 h-1 bg-yellow-400 rounded-full"></div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"> {/* changed gap from 6 to 8 */}
               {section.items.map((item, itemIndex) => (
                 <Link key={itemIndex} href={item.path} className="group">
-                  <div className="bg-gray-50 rounded-lg shadow-md p-8 hover:shadow-xl transition-all duration-300 h-[450px] flex flex-col justify-between transform hover:-translate-y-1 border border-gray-100"> {/* changed bg-white to bg-gray-50, added border, changed shadow-sm to shadow-md */}
+                  <div className="bg-gray-100 rounded-lg shadow-md p-8 hover:shadow-xl transition-all duration-300 h-[450px] flex flex-col justify-between transform hover:-translate-y-1 border border-gray-100"> {/* changed bg-white to bg-gray-50, added border, changed shadow-sm to shadow-md */}
                     <div>
                       <div className="flex flex-col items-center mb-8">
                         <span className="mb-6 text-yellow-500 group-hover:text-yellow-600 transition-colors">
@@ -51,7 +50,7 @@ const CurrentAffairsIndex = () => {
           </div>
         ))}
       </div>
-      <div className="flex justify-between">
+      <div className="flex flex-col md:flex-row justify-between px-4 sm:px-6">
         <ContactForm />
         <ContactMap />
       </div>
