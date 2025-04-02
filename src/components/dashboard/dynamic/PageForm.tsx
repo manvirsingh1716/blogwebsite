@@ -2,9 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Page } from '@prisma/client';
-import { ArticleForm } from './forms/ArticleForm';
-import { GeneralStudiesForm } from './forms/GeneralStudiesForm';
-import { UpscNotesForm } from './forms/UPSCNotesForm';
+import { ArticleForm, GeneralStudiesForm, UpscNotesForm, CurrentAffairForm } from '../forms';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { env } from '@/config/env';
@@ -93,6 +91,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState(1); // 1: Path Selection, 2: Template Selection, 3: Form
+  const [isLoading, setIsLoading] = useState(true);
   const token = Cookie.get('token');
 
   useEffect(() => {
@@ -122,47 +121,19 @@ export function PageForm({ editPage = null }: PageFormProps) {
 
   const fetchTemplates = async () => {
     try {
-      const response =  await fetch(`${env.API}/template`, {
+      setIsLoading(true);
+      const response = await fetch(`${env.API}/template`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!response.ok) throw new Error('Failed to fetch templates');
-      const { data } = await response.json();
+      const data = await response.json();
       
-      if (!data || data.length === 0) {
-        // Default templates if none exist in DB
-        const defaultTemplates = [
-          {
-            id: 'article',
-            name: 'Article',
-            description: 'Template for general articles',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-          {
-            id: 'general-studies',
-            name: 'General Studies',
-            description: 'Template for general studies content',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-          {
-            id: 'upsc-notes',
-            name: 'UPSC Notes',
-            description: 'Template for UPSC preparation notes',
-            layout: {},
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-        ];
-        setTemplates(defaultTemplates);
-      } else {
-        setTemplates(data);
-      }
+      setTemplates(data.templates || []);
+      setIsLoading(false);
     } catch (error) {
       console.error('Error fetching templates:', error);
       setError('Failed to load templates');
+      setIsLoading(false);
     }
   };
 
@@ -384,6 +355,7 @@ export function PageForm({ editPage = null }: PageFormProps) {
       'article': ArticleForm,
       'general-studies': GeneralStudiesForm,
       'upsc-notes': UpscNotesForm,
+      'current-affair': CurrentAffairForm,
     };
 
     const FormComponent = templateForms[currentTemplate.id];
@@ -457,11 +429,15 @@ export function PageForm({ editPage = null }: PageFormProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="_none">Choose a template...</SelectItem>
-                  {templates.map((template) => (
-                    <SelectItem key={template.id} value={template.id}>
-                      {template.name}
-                    </SelectItem>
-                  ))}
+                  {!isLoading && templates?.length > 0 ? (
+                    templates.map((template) => (
+                      <SelectItem key={template.id} value={template.id}>
+                        {template.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="_loading">Loading templates...</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
               <div className="mt-6 flex justify-between">
