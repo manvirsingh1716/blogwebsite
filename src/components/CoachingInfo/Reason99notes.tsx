@@ -5,10 +5,13 @@ const Reason99notes: React.FC = () => {
     <div className="bg-gradient-to-b from-gray-50 to-white py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4 relative inline-block">
-            Reason Why 99Notes is the Best UPSC Coaching in Delhi
-            <div className="absolute bottom-[-6px] left-0 w-full h-[2px] bg-slate-800 opacity-60 rounded-full"></div>
-          </h2>
+          <div className="relative inline-block">
+          <span className="text-slate-900 font-medium tracking-wider text-sm uppercase mb-4">Reason</span>
+            <h2 className="text-4xl font-bold text-gray-900 pt-2 mb-4">
+                Why 99Notes is the Best UPSC Coaching in Delhi
+            </h2>
+            <div className="w-24 h-1 bg-slate-900 mx-auto mt-2"></div>
+          </div>
           <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
             Discover why thousands of UPSC aspirants choose us as their preferred coaching institute
           </p>

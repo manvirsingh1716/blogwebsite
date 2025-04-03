@@ -52,7 +52,7 @@ const Footer = ({ footerSections }: FooterProps) => {
           </div>
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
-              © {new Date().getFullYear()} YourCompany. All Rights Reserved
+              © {new Date().getFullYear()} <a href="/">99notes.in</a> All Rights Reserved
             </p>
           </div>
         </div>
