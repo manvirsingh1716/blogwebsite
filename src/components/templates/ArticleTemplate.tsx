@@ -10,6 +10,7 @@ import SocialMedia from "@/components/navigation/socialmedia";
 import ContactForm from "@/components/common/ContactForm/ContactForm";
 import DraggableTocButton from "@/components/navigation/DraggableTocButton";
 import { Comments } from "@/components/ui/comments";
+import Ads from "../navigation/Ads";
 
 // interface ArticleContent {
 //   content: string;
@@ -201,7 +202,7 @@ export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
             <div className="relative">
               {/* TOC Section */}
               <div className="sticky top-8 space-y-4 sm:space-y-6">
-                <div className="bg-white border border-blue-100 rounded-xl shadow-lg p-4 sm:p-6 
+                <div className="hidden lg:block bg-white border border-blue-100 rounded-xl shadow-lg p-4 sm:p-6 
                 transition-all duration-300 hover:shadow-xl">
                   <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b-2 border-blue-200 pb-2">
                     📑 Table of Contents
@@ -225,6 +226,10 @@ export const ArticleTemplate: React.FC<BaseTemplateProps> = ({ page }) => {
                 {/* Contact Form Section */}
                 <div className="bg-white border border-blue-100 rounded-xl shadow-lg">
                   <ContactForm />
+                </div>
+
+                <div className="bg-white border border-blue-100 rounded-xl shadow-lg">
+                  <Ads imageUrl ="/" altText="ads"  />
                 </div>
 
                 {/* Tags Section - Fixed below Contact Form */}

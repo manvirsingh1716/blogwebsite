@@ -236,8 +236,8 @@ const DraggableTocButton: React.FC<DraggableTocButtonProps> = ({ className = '' 
         'shadow-md',
         'hover:shadow-lg',
         'transition-all',
-        'duration-500', // Increased duration
-        'ease-out', // Changed easing
+        'duration-700', // Increased from 500
+        'ease-out',
         'peer-checked:translate-x-[320px]',
         'group',
         'touch-none',
@@ -252,7 +252,7 @@ const DraggableTocButton: React.FC<DraggableTocButtonProps> = ({ className = '' 
       ].join(' ')}
       style={{
         boxShadow: '0 2px 6px rgba(0, 0, 0, 0.08)',
-        transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)', // Added spring effect to transform
+        transition: 'all 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)', // Increased durations and tweaked curve
       }}
     >
       <div className="flex flex-col items-center gap-1.5">
@@ -260,29 +260,32 @@ const DraggableTocButton: React.FC<DraggableTocButtonProps> = ({ className = '' 
         <span className="text-gray-600 text-xs font-medium tracking-wide rotate-180 [writing-mode:vertical-lr]">
           TOC
         </span>
-        <ChevronRight className="w-3 h-3 text-gray-600 transition-transform duration-300 group-hover:translate-x-0.5" />
+        <ChevronRight className="w-3 h-3 text-gray-600 transition-transform duration-500 group-hover:translate-x-0.5" />
       </div>
 
       <style jsx global>{`
         .dragging {
-          opacity: 0.95;
+          opacity: 0.98;
           cursor: grabbing !important;
-          transition: none !important; // Disable transitions while dragging
+          transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; // Added smooth opacity during drag
         }
 
         .side-switch-animation {
-          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important; // Spring effect for side switching
+          transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1) !important; // Smoother side switching
         }
 
         #toc-toggle:checked ~ label {
-          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1) !important;
         }
 
-        /* Smooth opacity transition */
+        /* Smooth opacity and movement transitions */
         label[for="toc-toggle"] {
           transition-property: all, opacity, transform;
-          transition-duration: 0.5s;
-          transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+          transition-duration: 0.7s;
+          transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+          transform: translateZ(0); /* Force GPU acceleration */
+          backface-visibility: hidden;
+          perspective: 1000px;
         }
       `}</style>
     </label>
