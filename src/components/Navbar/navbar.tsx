@@ -68,7 +68,7 @@ function NestedNavigation({
                     item.children.map((child) => (
                       <div key={child.slug} className="space-y-4">
                         <div className="space-y-2">
-                          <h3 className="text-[15px] font-bold text-gray-900 pb-2 border-b border-gray-100">
+                          <h3 className="text-[15px] font-bold text-gray-900 pb-2 border-b border-gray-100 font-urbanist">
                             {child.title}
                           </h3>
                           {child.children.length > 0 && (
@@ -77,10 +77,10 @@ function NestedNavigation({
                                 <Link
                                   key={grandChild.slug}
                                   href={`/${grandChild.slug}`}
-                                  className="block py-1.5 text-[13px] text-gray-600 hover:text-blue-600 transition-colors duration-150 hover:bg-gray-50 rounded px-2 flex items-center"
+                                  className="block py-1.5 text-[13px] text-gray-600 hover:text-blue-600 transition-colors duration-150 hover:bg-gray-50 rounded px-2 flex items-center font-inter tracking-wide"
                                 >
                                   <svg 
-                                    className="w-3 h-3 mr-2 fill-current"
+                                    className="w-3 h-3 mr-2 fill-current opacity-80"
                                     viewBox="0 0 24 24"
                                     xmlns="http://www.w3.org/2000/svg"
                                   >
@@ -103,7 +103,7 @@ function NestedNavigation({
                           <div key={child.slug} className="mb-2">
                             <Link
                               href={`/${child.slug}`}
-                              className="flex px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 text-sm font-medium items-center justify-between"
+                              className="flex px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 text-[14px] font-medium items-center justify-between font-urbanist tracking-wide"
                               onMouseEnter={() => setOpenDropdown(child.slug)}
                             >
                               <span>{child.title}</span>
@@ -130,12 +130,12 @@ function NestedNavigation({
                               (child) =>
                                 child.slug === openDropdown && (
                                   <div key={child.slug}>
-                                    <div className="grid grid-cols-3 gap-4">
+                                    <div className="grid grid-cols-2 gap-4">
                                       {child.children.map((grandChild) => (
                                         <div key={grandChild.slug} className="mb-4">
                                           <Link
                                             href={`/${grandChild.slug}`}
-                                            className="block px-3 py-2 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 text-sm font-medium flex items-center"
+                                            className="block px-2 py-1 text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 text-[13.5px] flex items-center font-inter tracking-wide"
                                           >
                                             <svg 
                                               className="w-3 h-3 mr-2 fill-current"
@@ -152,7 +152,7 @@ function NestedNavigation({
                                                 <Link
                                                   key={greatGrandChild.slug}
                                                   href={`/${greatGrandChild.slug}`}
-                                                  className="flex px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 items-center"
+                                                  className="flex px-3 py-1 text-[12.5px] font-medium text-gray-600 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors duration-200 items-center font-inter tracking-wide"
                                                 >
                                                   <svg 
                                                     className="w-3 h-3 mr-2 fill-current"

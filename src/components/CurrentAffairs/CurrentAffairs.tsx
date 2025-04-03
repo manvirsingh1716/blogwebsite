@@ -10,7 +10,7 @@ interface CurrentAffairsItem {
 }
 
 const currentAffairsData: CurrentAffairsItem[] = [
-  { title: 'Daily Current Affairs', icon: '📰', link: '/current-affairs/daily' },
+  { title: 'Daily Current Affairs', icon: '📰', link: '/current-affairs/news-daily' },
   { title: 'The Hindu Editorial', icon: '📑', link: '/current-affairs/hindu-editorial' },
   { title: 'Indian Express Editorial', icon: '📋', link: '/current-affairs/express-editorial' },
   { title: 'PIB', icon: '🏛️', link: '/current-affairs/pib' },
